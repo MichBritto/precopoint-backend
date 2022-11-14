@@ -1,0 +1,25 @@
+package br.com.precopoint.PrecoPoint.model;
+
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.persistence.*;
+
+@Getter
+@Setter
+@Entity
+public class Produto {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+    private String produto;
+    private double preco;
+    private String imagem;
+    private String descricao;
+
+    @ManyToOne
+    @JoinColumn(name = "fornecedor_id")
+    private Fornecedor fornecedor;
+
+}
