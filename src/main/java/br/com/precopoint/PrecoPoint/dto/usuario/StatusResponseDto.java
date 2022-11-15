@@ -1,11 +1,5 @@
 package br.com.precopoint.PrecoPoint.dto.usuario;
 
-import br.com.precopoint.PrecoPoint.dto.usuario.UsuarioResponseDto;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-@RestController
-@RequestMapping("teste")
 public class StatusResponseDto {
 
 
