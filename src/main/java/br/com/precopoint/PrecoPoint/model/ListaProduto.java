@@ -9,6 +9,7 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
+
 public class ListaProduto {
 
     @Id
@@ -18,6 +19,6 @@ public class ListaProduto {
     @ManyToOne
     private Consumidor consumidor;
 
-    private List<Produto> produtos;
+    //private List<Produto> produtos;
 
 }

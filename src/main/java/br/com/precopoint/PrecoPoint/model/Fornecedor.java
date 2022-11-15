@@ -16,4 +16,6 @@ public class Fornecedor extends Usuario{
 
     private String cnpj;
     private String logotipo;
+
+
 }

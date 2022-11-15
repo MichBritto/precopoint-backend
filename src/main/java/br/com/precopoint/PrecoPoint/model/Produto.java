@@ -17,6 +17,7 @@ public class Produto {
     private double preco;
     private String imagem;
     private String descricao;
+    private String marcaProduto;
 
     @ManyToOne
     @JoinColumn(name = "fornecedor_id")

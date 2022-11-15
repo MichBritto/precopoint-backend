@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 //@Inheritance(strategy = InheritanceType.JOINED)
 @Getter
@@ -26,4 +27,25 @@ public abstract class Usuario {
     //@Enumerated(EnumType.STRING)
     @Column(name = "tipoconta")
     private TipoConta tipoConta;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Usuario)) return false;
+        Usuario usuario = (Usuario) o;
+        return Objects.equals(getEmail(), usuario.getEmail());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getEmail());
+    }
+
+    @Override
+    public String toString() {
+        return "Usuario{" +
+                ", email='" + email + '\'' +
+                ", tipoConta=" + tipoConta +
+                '}';
+    }
 }
