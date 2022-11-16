@@ -1,5 +1,8 @@
 package br.com.precopoint.PrecoPoint.dto.usuario;
 
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
 public class StatusResponseDto {
 
 
