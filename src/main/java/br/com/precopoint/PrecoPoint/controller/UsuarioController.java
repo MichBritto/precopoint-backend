@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @Controller
 @RequestMapping("add-usuario")
 public class UsuarioController {
@@ -20,13 +22,13 @@ public class UsuarioController {
     @Autowired
     FornecedorService fornecedorService;
     @PostMapping("consumidor")
-    public ResponseEntity<UsuarioResponseDto> addConsumidor(@RequestBody Consumidor consumidor) throws Exception {
+    public ResponseEntity<UsuarioResponseDto> addConsumidor(@RequestBody @Valid Consumidor consumidor) throws Exception {
         return consumidorService.addConsumidor(consumidor);
     }
 
 
     @PostMapping("fornecedor")
-    public ResponseEntity<UsuarioResponseDto> addFornecedor(@RequestBody Fornecedor fornecedor) throws Exception{
+    public ResponseEntity<UsuarioResponseDto> addFornecedor(@RequestBody @Valid Fornecedor fornecedor) throws Exception{
         return fornecedorService.addFornecedor(fornecedor);
     }
 }

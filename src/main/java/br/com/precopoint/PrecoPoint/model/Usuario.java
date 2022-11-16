@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.util.Objects;
 
 //@Inheritance(strategy = InheritanceType.JOINED)
@@ -15,16 +16,22 @@ import java.util.Objects;
 @MappedSuperclass
 public abstract class Usuario {
 
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+    @NotBlank
     private String nome;
+    @NotBlank
     private String endereco;
+    @NotBlank
     private String email;
+    @NotBlank
     private String senha;
 
     //caso deseje guardar a string do enum
     //@Enumerated(EnumType.STRING)
+
     @Column(name = "tipoconta")
     private TipoConta tipoConta;
 
