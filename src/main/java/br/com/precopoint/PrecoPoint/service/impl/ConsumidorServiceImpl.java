@@ -1,6 +1,6 @@
 package br.com.precopoint.PrecoPoint.service.impl;
 
-import br.com.precopoint.PrecoPoint.dto.usuario.StatusResponseDto;
+import br.com.precopoint.PrecoPoint.dto.usuario.ConsumidorRequestDto;
 import br.com.precopoint.PrecoPoint.dto.usuario.UsuarioResponseDto;
 import br.com.precopoint.PrecoPoint.model.Consumidor;
 import br.com.precopoint.PrecoPoint.repository.ConsumidorRepository;
@@ -22,15 +22,12 @@ public class ConsumidorServiceImpl implements ConsumidorService {
     FornecedorRepository fornecedorRepository;
 
     @Override
-    public ResponseEntity<UsuarioResponseDto> addConsumidor(Consumidor consumidor) throws Exception {
+    public ResponseEntity<UsuarioResponseDto> addConsumidor(ConsumidorRequestDto consumidor) throws Exception {
 
         try {
-            if(consumidorRepository.findByEmail(consumidor.getEmail()).isEmpty()){
-                if(fornecedorRepository.findByEmail(consumidor.getEmail()).isEmpty()){
-                    consumidorRepository.save(consumidor);
+            if((consumidorRepository.findByEmail(consumidor.getEmail()).isEmpty()) && (fornecedorRepository.findByEmail(consumidor.getEmail()).isEmpty()) ){
+                    consumidorRepository.save(consumidor.toConsumidor());
                     return ResponseEntity.ok(cadastroStatusService.statusTrue());
-                }
-
             }
         }catch(Exception e){
             throw new Exception(e.getMessage());

@@ -4,17 +4,17 @@ package br.com.precopoint.PrecoPoint.model;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.util.Objects;
 
-//@Inheritance(strategy = InheritanceType.JOINED)
 @Getter
 @Setter
 @NoArgsConstructor
-@MappedSuperclass
-public abstract class Usuario {
+@MappedSuperclass //cria duas tabelas diferentes no bd (fornecedor e consumidor)
+public abstract class Usuario implements UserDetails {
 
 
     @Id
@@ -52,7 +52,7 @@ public abstract class Usuario {
     public String toString() {
         return "Usuario{" +
                 ", email='" + email + '\'' +
-                ", tipoConta=" + tipoConta +
                 '}';
     }
+
 }
