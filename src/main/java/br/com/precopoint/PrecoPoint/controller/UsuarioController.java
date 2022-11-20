@@ -1,8 +1,8 @@
 package br.com.precopoint.PrecoPoint.controller;
 
+import br.com.precopoint.PrecoPoint.dto.usuario.ConsumidorRequestDto;
+import br.com.precopoint.PrecoPoint.dto.usuario.FornecedorRequestDto;
 import br.com.precopoint.PrecoPoint.dto.usuario.UsuarioResponseDto;
-import br.com.precopoint.PrecoPoint.model.Consumidor;
-import br.com.precopoint.PrecoPoint.model.Fornecedor;
 import br.com.precopoint.PrecoPoint.service.ConsumidorService;
 import br.com.precopoint.PrecoPoint.service.FornecedorService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,14 +21,16 @@ public class UsuarioController {
     ConsumidorService consumidorService;
     @Autowired
     FornecedorService fornecedorService;
+
     @PostMapping("consumidor")
-    public ResponseEntity<UsuarioResponseDto> addConsumidor(@RequestBody @Valid Consumidor consumidor) throws Exception {
+    public ResponseEntity<UsuarioResponseDto> addConsumidor(@RequestBody @Valid ConsumidorRequestDto consumidor) throws Exception {
         return consumidorService.addConsumidor(consumidor);
     }
 
 
     @PostMapping("fornecedor")
-    public ResponseEntity<UsuarioResponseDto> addFornecedor(@RequestBody @Valid Fornecedor fornecedor) throws Exception{
+    public ResponseEntity<UsuarioResponseDto> addFornecedor(@RequestBody @Valid FornecedorRequestDto fornecedor) throws Exception{
         return fornecedorService.addFornecedor(fornecedor);
     }
+
 }

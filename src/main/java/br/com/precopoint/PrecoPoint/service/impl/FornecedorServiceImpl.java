@@ -1,7 +1,7 @@
 package br.com.precopoint.PrecoPoint.service.impl;
 
 
-import br.com.precopoint.PrecoPoint.dto.usuario.StatusResponseDto;
+import br.com.precopoint.PrecoPoint.dto.usuario.FornecedorRequestDto;
 import br.com.precopoint.PrecoPoint.dto.usuario.UsuarioResponseDto;
 import br.com.precopoint.PrecoPoint.model.Fornecedor;
 import br.com.precopoint.PrecoPoint.repository.ConsumidorRepository;
@@ -23,14 +23,12 @@ public class FornecedorServiceImpl implements FornecedorService {
     FornecedorRepository fornecedorRepository;
 
     @Override
-    public ResponseEntity<UsuarioResponseDto> addFornecedor(Fornecedor fornecedor) throws Exception {
+    public ResponseEntity<UsuarioResponseDto> addFornecedor(FornecedorRequestDto fornecedor) throws Exception {
 
         try {
-            if(consumidorRepository.findByEmail(fornecedor.getEmail()).isEmpty()){
-                if(fornecedorRepository.findByEmail(fornecedor.getEmail()).isEmpty()){
-                    fornecedorRepository.save(fornecedor);
-                    return ResponseEntity.ok(cadastroStatusService.statusTrue());
-                }
+            if((consumidorRepository.findByEmail(fornecedor.getEmail()).isEmpty()) && (fornecedorRepository.findByEmail(fornecedor.getEmail()).isEmpty()) ){
+                fornecedorRepository.save(fornecedor.toFornecedor());
+                return ResponseEntity.ok(cadastroStatusService.statusTrue());
             }
         }catch(Exception e){
             throw new Exception(e.getMessage());

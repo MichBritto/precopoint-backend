@@ -1,5 +1,6 @@
 package br.com.precopoint.PrecoPoint.service;
 
+import br.com.precopoint.PrecoPoint.dto.usuario.ConsumidorRequestDto;
 import br.com.precopoint.PrecoPoint.dto.usuario.UsuarioResponseDto;
 import br.com.precopoint.PrecoPoint.model.Consumidor;
 import org.springframework.http.ResponseEntity;
@@ -9,5 +10,5 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 public interface ConsumidorService {
 
-    ResponseEntity<UsuarioResponseDto> addConsumidor(Consumidor consumidor) throws Exception;
+    ResponseEntity<UsuarioResponseDto> addConsumidor(ConsumidorRequestDto consumidor) throws Exception;
 }
