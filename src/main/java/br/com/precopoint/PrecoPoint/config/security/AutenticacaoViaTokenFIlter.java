@@ -36,7 +36,6 @@ public class AutenticacaoViaTokenFIlter extends OncePerRequestFilter {
     }
 
     private void autenticarCliente(String token) {
-
         String emailUsuario = this.tokenService.getEmailUsuario(token);
         Usuario usuario = null;
         if(fornecedorRepository.findByEmail(emailUsuario).isEmpty()){

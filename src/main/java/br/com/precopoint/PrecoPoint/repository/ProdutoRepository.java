@@ -1,14 +1,14 @@
 package br.com.precopoint.PrecoPoint.repository;
 
 import br.com.precopoint.PrecoPoint.model.Fornecedor;
+import br.com.precopoint.PrecoPoint.model.Produto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
 @Repository
-public interface FornecedorRepository extends JpaRepository<Fornecedor, Integer> {
-    Optional<Fornecedor> findByEmail(String email);
-    Optional<Fornecedor> findByNome(String nome);
-
+public interface ProdutoRepository extends JpaRepository<Produto, Integer> {
+    Optional <Produto> findByProduto(String produto);
+    Optional <Produto> findByFornecedor(Fornecedor fornecedor);
 }

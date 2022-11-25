@@ -25,7 +25,8 @@ public class TokenService {
         return Jwts.builder()
                 .setIssuer("api-precopoint")
                 .setSubject(userLogado.getEmail())
-                .setIssuedAt(dataExpiracao)
+                .setIssuedAt(hoje)
+                .setExpiration(dataExpiracao)
                 .signWith(SignatureAlgorithm.HS512,secret)
                 .compact();
     }
