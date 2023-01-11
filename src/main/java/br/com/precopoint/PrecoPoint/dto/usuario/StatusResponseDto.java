@@ -8,7 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class UsuarioResponseDto {
+public class StatusResponseDto {
 
     private String mensagem;
     private boolean status;

@@ -1,5 +1,6 @@
 package br.com.precopoint.PrecoPoint.model;
 
+import com.sun.istack.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
