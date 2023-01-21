@@ -5,6 +5,8 @@ import br.com.precopoint.PrecoPoint.dto.login.LoginFormDto;
 import br.com.precopoint.PrecoPoint.dto.login.TokenDto;
 import br.com.precopoint.PrecoPoint.repository.ConsumidorRepository;
 import br.com.precopoint.PrecoPoint.repository.FornecedorRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,6 +24,7 @@ import javax.validation.Valid;
 @RequestMapping("/auth")
 public class AuthenticationController{
 
+    private static final Logger logger = LoggerFactory.getLogger(AuthenticationController.class);
     @Autowired
     AuthenticationManager authManager;
 
@@ -40,6 +43,7 @@ public class AuthenticationController{
             TokenDto response = new TokenDto();
             response.setTipo("Bearer");
             response.setToken(token);
+            logger.info("Usuario "+ login.getEmail() +" logado com sucesso");
             return ResponseEntity.ok(response);
         }catch(AuthenticationException e){
             return ResponseEntity.badRequest().build();
