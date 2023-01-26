@@ -3,8 +3,6 @@ package br.com.precopoint.PrecoPoint.controller;
 import br.com.precopoint.PrecoPoint.config.security.TokenService;
 import br.com.precopoint.PrecoPoint.dto.login.LoginFormDto;
 import br.com.precopoint.PrecoPoint.dto.login.TokenDto;
-import br.com.precopoint.PrecoPoint.repository.ConsumidorRepository;
-import br.com.precopoint.PrecoPoint.repository.FornecedorRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,11 +29,11 @@ public class AuthenticationController{
     @Autowired
     TokenService tokenService;
 
-
+    LoginFormDto user;
 
     @PostMapping
     public ResponseEntity<TokenDto> autenticar(@RequestBody @Valid LoginFormDto login) {
-
+        this.user = login;
         UsernamePasswordAuthenticationToken dadosLogin = login.converter();
         try{
             Authentication authentication = authManager.authenticate(dadosLogin);
@@ -48,6 +46,9 @@ public class AuthenticationController{
         }catch(AuthenticationException e){
             return ResponseEntity.badRequest().build();
         }
+    }
 
+    public LoginFormDto getUser(){
+        return this.user;
     }
 }
