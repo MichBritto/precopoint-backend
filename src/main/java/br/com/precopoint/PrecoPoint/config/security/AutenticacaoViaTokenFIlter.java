@@ -3,6 +3,7 @@ package br.com.precopoint.PrecoPoint.config.security;
 import br.com.precopoint.PrecoPoint.model.Usuario;
 import br.com.precopoint.PrecoPoint.repository.ConsumidorRepository;
 import br.com.precopoint.PrecoPoint.repository.FornecedorRepository;
+import org.apache.logging.log4j.ThreadContext;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -18,6 +19,8 @@ public class AutenticacaoViaTokenFIlter extends OncePerRequestFilter {
     private TokenService tokenService;
     private ConsumidorRepository consumidorRepository;
     private FornecedorRepository fornecedorRepository;
+
+    private Usuario usuario = null;
 
     public AutenticacaoViaTokenFIlter (TokenService tokenService, ConsumidorRepository consumidorRepository, FornecedorRepository fornecedorRepository){
         this.tokenService =  tokenService;
@@ -45,6 +48,7 @@ public class AutenticacaoViaTokenFIlter extends OncePerRequestFilter {
         else
             usuario = fornecedorRepository.findByEmail(emailUsuario).get();
 
+        this.usuario = usuario;
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(usuario, null, usuario.getAuthorities());
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -57,6 +61,7 @@ public class AutenticacaoViaTokenFIlter extends OncePerRequestFilter {
             return null;
         }
 
+        ThreadContext.put("userName",  usuario.getUsername());
         return token.substring(7, token.length());
     }
 }
