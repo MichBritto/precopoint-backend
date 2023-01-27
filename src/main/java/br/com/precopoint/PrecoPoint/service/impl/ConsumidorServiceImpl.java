@@ -31,6 +31,6 @@ public class ConsumidorServiceImpl implements ConsumidorService {
         }catch(Exception e){
             throw new Exception(e.getMessage());
         }
-        return ResponseEntity.ok(cadastroStatusService.usuarioStatusFalse());
+        return ResponseEntity.badRequest().body(cadastroStatusService.usuarioStatusFalse());
     }
 }

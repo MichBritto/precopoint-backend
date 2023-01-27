@@ -1,0 +1,24 @@
+<Configuration>
+    <Appenders>
+        <Console name = "console" target = "SYSTEM_OUT">
+            <PatternLayout  pattern="%d %-5level %logger{0} - %msg - %X{user} %n" />
+        </Console>
+        <JDBC name="database" tableName="logging">
+            <ConnectionFactory class="br.com.precopoint.PrecoPoint.config.ConnectionFactory" method="getDatabaseConnection" />
+            <Column name="USER" pattern="%X{user}" />
+            <Column name="EVENT_DATE" isEventTimestamp="true" />
+            <Column name="LEVEL" pattern="%level" />
+            <Column name="LOGGER" pattern="%logger{36}" />
+            <Column name="MSG" pattern="%message" />
+            <Column name="THROWABLE" pattern="%ex{full}" />
+        </JDBC>
+    </Appenders>
+    <Loggers>
+        <Logger name="br.com.precopoint.PrecoPoint.controller" level="INFO">
+            <AppenderRef ref="database"/>
+        </Logger>
+        <Root level="INFO">
+            <AppenderRef ref="console"/>
+        </Root>
+    </Loggers>
+</Configuration>
