@@ -1,8 +1,10 @@
 package br.com.precopoint.PrecoPoint.controller;
 
+import br.com.precopoint.PrecoPoint.config.Log4J2Runnable;
 import br.com.precopoint.PrecoPoint.config.security.TokenService;
 import br.com.precopoint.PrecoPoint.dto.login.LoginFormDto;
 import br.com.precopoint.PrecoPoint.dto.login.TokenDto;
+import org.apache.logging.log4j.ThreadContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +22,7 @@ import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/auth")
-public class AuthenticationController{
+public class AuthenticationController {
 
     private static final Logger logger = LoggerFactory.getLogger(AuthenticationController.class);
     @Autowired
@@ -41,6 +43,7 @@ public class AuthenticationController{
             TokenDto response = new TokenDto();
             response.setTipo("Bearer");
             response.setToken(token);
+            ThreadContext.put("user",login.getEmail());
             logger.info("Usuario "+ login.getEmail() +" logado com sucesso");
             return ResponseEntity.ok(response);
         }catch(AuthenticationException e){
@@ -51,4 +54,5 @@ public class AuthenticationController{
     public LoginFormDto getUser(){
         return this.user;
     }
+
 }

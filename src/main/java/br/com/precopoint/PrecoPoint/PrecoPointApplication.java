@@ -16,6 +16,7 @@ public class PrecoPointApplication {
 
 		logger.info("Iniciando aplicação..");
 		SpringApplication.run(PrecoPointApplication.class, args);
+		System.setProperty("isThreadContextMapInheritable", "true");
 		logger.info("Aplicação iniciada.");
 	}
 
