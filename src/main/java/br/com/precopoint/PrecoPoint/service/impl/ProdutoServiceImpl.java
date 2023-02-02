@@ -1,5 +1,6 @@
 package br.com.precopoint.PrecoPoint.service.impl;
 
+import br.com.precopoint.PrecoPoint.controller.AuthenticationController;
 import br.com.precopoint.PrecoPoint.dto.produto.ProdutoRequestDto;
 import br.com.precopoint.PrecoPoint.dto.usuario.StatusResponseDto;
 import br.com.precopoint.PrecoPoint.model.Produto;
@@ -7,6 +8,9 @@ import br.com.precopoint.PrecoPoint.repository.FornecedorRepository;
 import br.com.precopoint.PrecoPoint.repository.ProdutoRepository;
 import br.com.precopoint.PrecoPoint.service.ProdutoService;
 import br.com.precopoint.PrecoPoint.service.StatusService;
+import org.apache.logging.log4j.ThreadContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -15,6 +19,7 @@ import java.util.List;
 
 @Service
 public class ProdutoServiceImpl implements ProdutoService {
+    private static final Logger logger = LoggerFactory.getLogger(AuthenticationController.class);
     @Autowired
     ProdutoRepository produtoRepository;
 
@@ -24,14 +29,20 @@ public class ProdutoServiceImpl implements ProdutoService {
     @Autowired
     StatusService statusService;
 
+    @Autowired
+    AuthenticationController authenticationController;
     @Override
     public ResponseEntity<StatusResponseDto> addProduto(ProdutoRequestDto request) throws Exception {
 
         try{
             produtoRepository.save(request.toProuduto(fornecedorRepository));
+            ThreadContext.put("user", authenticationController.getUser());
+            logger.info("Produto: "+request.getProduto() +" adicionado");
             return ResponseEntity.ok(statusService.produtoStatusTrue());
         }catch(Exception e){
-            return ResponseEntity.ok(statusService.produtoStatusFalse());
+            ThreadContext.put("user", authenticationController.getUser());
+            logger.info(statusService.produtoStatusFalse().getMensagem());
+            return ResponseEntity.badRequest().body(statusService.produtoStatusFalse());
         }
 
     }

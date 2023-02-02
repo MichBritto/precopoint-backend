@@ -1,11 +1,11 @@
 package br.com.precopoint.PrecoPoint.controller;
 
-import br.com.precopoint.PrecoPoint.config.Log4J2Runnable;
 import br.com.precopoint.PrecoPoint.config.security.TokenService;
 import br.com.precopoint.PrecoPoint.dto.login.LoginFormDto;
 import br.com.precopoint.PrecoPoint.dto.login.TokenDto;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.ThreadContext;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,18 +24,18 @@ import javax.validation.Valid;
 @RequestMapping("/auth")
 public class AuthenticationController {
 
-    private static final Logger logger = LoggerFactory.getLogger(AuthenticationController.class);
+    private static Logger logger = LogManager.getLogger(ProdutoController.class);
     @Autowired
     AuthenticationManager authManager;
 
     @Autowired
     TokenService tokenService;
 
-    LoginFormDto user;
+    private String user;
 
     @PostMapping
     public ResponseEntity<TokenDto> autenticar(@RequestBody @Valid LoginFormDto login) {
-        this.user = login;
+        this.user = login.getEmail();
         UsernamePasswordAuthenticationToken dadosLogin = login.converter();
         try{
             Authentication authentication = authManager.authenticate(dadosLogin);
@@ -44,14 +44,15 @@ public class AuthenticationController {
             response.setTipo("Bearer");
             response.setToken(token);
             ThreadContext.put("user",login.getEmail());
-            logger.info("Usuario "+ login.getEmail() +" logado com sucesso");
+            logger.info("Usuario logado com sucesso");
             return ResponseEntity.ok(response);
         }catch(AuthenticationException e){
+            logger.error("Exception: "+e.getMessage());
             return ResponseEntity.badRequest().build();
         }
     }
 
-    public LoginFormDto getUser(){
+    public String getUser(){
         return this.user;
     }
 
