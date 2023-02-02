@@ -36,4 +36,32 @@ public class StatusServiceImpl implements StatusService {
         statusResponseDto.setStatus(false);
         return statusResponseDto;
     }
+
+    @Override
+    public StatusResponseDto listaStatusTrue() {
+        statusResponseDto.setMensagem("Lista criada com sucesso");
+        statusResponseDto.setStatus(true);
+        return statusResponseDto;
+    }
+
+    @Override
+    public StatusResponseDto listaStatusFalse() {
+        statusResponseDto.setMensagem("Erro ao criar lista");
+        statusResponseDto.setStatus(false);
+        return statusResponseDto;
+    }
+
+    @Override
+    public StatusResponseDto addProdutoListaTrue() {
+        statusResponseDto.setMensagem("Produto adicionado a lista");
+        statusResponseDto.setStatus(true);
+        return statusResponseDto;
+    }
+
+    @Override
+    public StatusResponseDto addProdutoListaFalse() {
+        statusResponseDto.setMensagem("Erro ao adicionar produto a lista");
+        statusResponseDto.setStatus(false);
+        return statusResponseDto;
+    }
 }

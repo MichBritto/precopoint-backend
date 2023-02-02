@@ -1,8 +1,6 @@
 package br.com.precopoint.PrecoPoint.controller;
 
 
-import br.com.precopoint.PrecoPoint.PrecoPointApplication;
-import br.com.precopoint.PrecoPoint.config.Log4J2Runnable;
 import br.com.precopoint.PrecoPoint.dto.produto.ProdutoRequestDto;
 import br.com.precopoint.PrecoPoint.dto.usuario.StatusResponseDto;
 import br.com.precopoint.PrecoPoint.model.Produto;
@@ -15,13 +13,12 @@ import org.apache.logging.log4j.ThreadContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import javax.validation.Valid;
 import java.util.List;
 
 @RestController
 @RequestMapping("/produto")
-public class ProdutoController extends Log4J2Runnable {
+public class ProdutoController{
 
     @Autowired
     ProdutoRepository produtoRepository;
@@ -42,13 +39,7 @@ public class ProdutoController extends Log4J2Runnable {
 
     @GetMapping("list-produto")
     ResponseEntity<List<Produto>> getProduto(){
-        logger.info("Lista de produtos coletada");
-        //ThreadContext.put("user2", authenticationController.getUser().getEmail());
         return produtoService.getProduto();
     }
 
-    @Override
-    protected void runWithContext() {
-        ThreadContext.getContext();
-    }
 }

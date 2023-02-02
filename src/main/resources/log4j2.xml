@@ -1,7 +1,7 @@
 <Configuration>
     <Appenders>
         <Console name = "console" target = "SYSTEM_OUT">
-            <PatternLayout  pattern="%d %-5level %logger{0} - %msg - %X{user} %n" />
+            <PatternLayout  pattern="%d %-5level %logger{0} : %msg %X{user} %n" />
         </Console>
         <JDBC name="database" tableName="logging">
             <ConnectionFactory class="br.com.precopoint.PrecoPoint.config.ConnectionFactory" method="getDatabaseConnection" />
