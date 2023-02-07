@@ -1,16 +1,15 @@
 package br.com.precopoint.PrecoPoint.config;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Properties;
-
-import javax.sql.DataSource;
-
 import org.apache.commons.dbcp.DriverManagerConnectionFactory;
 import org.apache.commons.dbcp.PoolableConnection;
 import org.apache.commons.dbcp.PoolableConnectionFactory;
 import org.apache.commons.dbcp.PoolingDataSource;
 import org.apache.commons.pool.impl.GenericObjectPool;
+
+import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Properties;
 
 public class ConnectionFactory {
     private static interface Singleton {
@@ -21,12 +20,12 @@ public class ConnectionFactory {
 
     private ConnectionFactory() {
         Properties properties = new Properties();
-        properties.setProperty("user", "root");
-        properties.setProperty("password", ""); // or get properties from some configuration file
+        properties.setProperty("user", System.getenv("DATABASE_USER"));
+        properties.setProperty("password", System.getenv("DATABASE_PASSWORD")); // or get properties from some configuration file
 
         GenericObjectPool<PoolableConnection> pool = new GenericObjectPool<PoolableConnection>();
         DriverManagerConnectionFactory connectionFactory = new DriverManagerConnectionFactory(
-                "jdbc:mysql://localhost:3306/precopoint", properties
+                System.getenv("DATABASE_URL"), properties
         );
         new PoolableConnectionFactory(
                 connectionFactory, pool, null, "SELECT 1", 3, false, false, Connection.TRANSACTION_READ_COMMITTED
@@ -39,3 +38,4 @@ public class ConnectionFactory {
         return Singleton.INSTANCE.dataSource.getConnection();
     }
 }
+
