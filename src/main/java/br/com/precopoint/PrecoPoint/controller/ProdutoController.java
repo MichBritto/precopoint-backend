@@ -9,13 +9,11 @@ import br.com.precopoint.PrecoPoint.repository.ProdutoRepository;
 import br.com.precopoint.PrecoPoint.service.ProdutoService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.ThreadContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/produto")
@@ -42,5 +40,4 @@ public class ProdutoController{
     ResponseEntity<List<Produto>> getProduto(){
         return produtoService.getProduto();
     }
-
 }
