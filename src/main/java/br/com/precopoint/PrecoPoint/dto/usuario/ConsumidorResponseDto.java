@@ -1,16 +1,17 @@
 package br.com.precopoint.PrecoPoint.dto.usuario;
 
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@Getter
-@Setter
+import javax.validation.constraints.NotBlank;
+
+@Data
 @NoArgsConstructor
 public class ConsumidorResponseDto {
 
+    @NotBlank
     private String nome;
+    @NotBlank
     private String email;
-    private String endereco;
 
 }

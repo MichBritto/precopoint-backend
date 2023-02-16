@@ -49,7 +49,7 @@ public class SecurityConfigurations extends WebSecurityConfigurerAdapter {
         http.csrf()
                 .disable()
                 .authorizeRequests()
-                .antMatchers("/","/auth","/produto/list-produto").permitAll()
+                .antMatchers("/","/auth","/lista/getlista-consumidor").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and().cors()
@@ -60,18 +60,4 @@ public class SecurityConfigurations extends WebSecurityConfigurerAdapter {
 
 
     }
-    /*@Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf()
-                .disable()
-                .authorizeRequests()
-                .antMatchers("/").authenticated()
-                .anyRequest()
-                .permitAll()
-                .and().formLogin();
-
-        return http.build();
-    }*/
-
-
 }
