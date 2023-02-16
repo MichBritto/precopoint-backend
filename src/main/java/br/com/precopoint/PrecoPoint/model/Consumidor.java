@@ -1,35 +1,21 @@
 package br.com.precopoint.PrecoPoint.model;
 
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import java.util.Collection;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @Entity
 @Table(name = "consumidor")
 public class Consumidor extends Usuario{
 
 
-    public void criarLista(){
-        ListaProduto listaProduto = new ListaProduto();
 
-    }
-    public void deletarLista(){
-
-    }
-    public void alterarLista(){
-
-    }
-    public void addProdutoLista(){
-
-    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

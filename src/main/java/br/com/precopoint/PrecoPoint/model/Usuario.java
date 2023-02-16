@@ -1,17 +1,15 @@
 package br.com.precopoint.PrecoPoint.model;
 
 
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.util.Objects;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @MappedSuperclass //cria duas tabelas diferentes no bd (fornecedor e consumidor)
 public abstract class Usuario implements UserDetails {
