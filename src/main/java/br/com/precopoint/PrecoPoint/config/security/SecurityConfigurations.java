@@ -49,7 +49,7 @@ public class SecurityConfigurations extends WebSecurityConfigurerAdapter {
         http.csrf()
                 .disable()
                 .authorizeRequests()
-                .antMatchers("/","/auth","/lista/getlista-consumidor").permitAll()
+                .antMatchers("/","/auth","/lista/getlista-consumidor","/lista/getprodutos-lista").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and().cors()
