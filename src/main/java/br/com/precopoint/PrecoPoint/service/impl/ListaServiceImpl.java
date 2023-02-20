@@ -3,11 +3,10 @@ package br.com.precopoint.PrecoPoint.service.impl;
 import br.com.precopoint.PrecoPoint.controller.AuthenticationController;
 import br.com.precopoint.PrecoPoint.dto.lista.ListaDonoDto;
 import br.com.precopoint.PrecoPoint.dto.lista.ListaProdutoDto;
-import br.com.precopoint.PrecoPoint.dto.usuario.ConsumidorRequestDto;
+import br.com.precopoint.PrecoPoint.dto.lista.ListaRequestDto;
 import br.com.precopoint.PrecoPoint.dto.usuario.ConsumidorResponseDto;
 import br.com.precopoint.PrecoPoint.dto.usuario.StatusResponseDto;
 import br.com.precopoint.PrecoPoint.model.Consumidor;
-import br.com.precopoint.PrecoPoint.model.Lista;
 import br.com.precopoint.PrecoPoint.repository.ConsumidorRepository;
 import br.com.precopoint.PrecoPoint.repository.ListaProdutoRepository;
 import br.com.precopoint.PrecoPoint.repository.ListaRepository;
@@ -78,6 +77,15 @@ public class ListaServiceImpl implements ListaService {
         try{
             Optional<Consumidor> response = consumidorRepository.findByEmail(consumidor.getEmail());
             return ResponseEntity.ok(listaRepository.findAllByConsumidor(response.get()));
+        }catch (Exception e){
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    @Override
+    public ResponseEntity<List<?>> getProdutosByLista(ListaRequestDto listaRequestDto) throws Exception {
+        try{
+            return ResponseEntity.ok(listaProdutoRepository.findAllByLista(listaRequestDto.toLista()));
         }catch (Exception e){
             throw new Exception(e.getMessage());
         }

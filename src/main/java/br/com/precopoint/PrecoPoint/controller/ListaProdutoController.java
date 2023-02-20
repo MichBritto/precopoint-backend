@@ -3,8 +3,10 @@ package br.com.precopoint.PrecoPoint.controller;
 
 import br.com.precopoint.PrecoPoint.dto.lista.ListaDonoDto;
 import br.com.precopoint.PrecoPoint.dto.lista.ListaProdutoDto;
+import br.com.precopoint.PrecoPoint.dto.lista.ListaRequestDto;
 import br.com.precopoint.PrecoPoint.dto.usuario.ConsumidorResponseDto;
 import br.com.precopoint.PrecoPoint.dto.usuario.StatusResponseDto;
+import br.com.precopoint.PrecoPoint.repository.ListaProdutoRepository;
 import br.com.precopoint.PrecoPoint.repository.ListaRepository;
 import br.com.precopoint.PrecoPoint.service.ListaService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,9 @@ public class ListaProdutoController {
     ListaService listaService;
 
     @Autowired
+    ListaProdutoRepository listaProdutoRepository;
+
+    @Autowired
     ListaRepository listaRepository;
 
     @PostMapping("criarlista")
@@ -35,9 +40,13 @@ public class ListaProdutoController {
         return listaService.addProduto(request);
     }
 
-    @GetMapping("getlista-consumidor")
-    public ResponseEntity<List<?>> getListaConsumidor(@Valid @RequestBody ConsumidorResponseDto consumidor) throws Exception {
+    @PostMapping("getlista-consumidor")
+    public ResponseEntity<List<?>> getListaConsumidor(@Valid @RequestBody ConsumidorResponseDto consumidor, String lista) throws Exception {
         return listaService.getListaConsumidor(consumidor);
     }
 
+    @PostMapping("getprodutos-lista")
+    public ResponseEntity<List<?>> getProdutosByLista(@Valid @RequestBody ListaRequestDto listaRequestDto) throws Exception {
+        return listaService.getProdutosByLista(listaRequestDto);
+    }
 }
