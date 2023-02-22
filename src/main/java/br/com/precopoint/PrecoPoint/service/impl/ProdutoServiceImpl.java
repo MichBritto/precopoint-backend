@@ -1,6 +1,7 @@
 package br.com.precopoint.PrecoPoint.service.impl;
 
 import br.com.precopoint.PrecoPoint.controller.AuthenticationController;
+import br.com.precopoint.PrecoPoint.dto.produto.FindProdutoRequest;
 import br.com.precopoint.PrecoPoint.dto.produto.ProdutoRequestDto;
 import br.com.precopoint.PrecoPoint.dto.usuario.StatusResponseDto;
 import br.com.precopoint.PrecoPoint.model.Produto;
@@ -50,5 +51,23 @@ public class ProdutoServiceImpl implements ProdutoService {
     @Override
     public ResponseEntity<List<Produto>> getProduto() {
         return ResponseEntity.ok(produtoRepository.findAll());
+    }
+
+    @Override
+    public ResponseEntity<List<Produto>> getProdutoAsc() throws Exception {
+        try {
+            return ResponseEntity.ok(produtoRepository.findAllByOrderByPrecoAsc());
+        }catch (Exception e){
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    @Override
+    public ResponseEntity<List<Produto>> getProdutoByNomeAsc(FindProdutoRequest findProdutoRequest) throws Exception {
+        try {
+            return ResponseEntity.ok(produtoRepository.findAllByProdutoOrderByPrecoAsc(findProdutoRequest.getProduto()));
+        }catch (Exception e){
+            throw new Exception(e.getMessage());
+        }
     }
 }
