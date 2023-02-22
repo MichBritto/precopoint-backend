@@ -11,7 +11,10 @@ import br.com.precopoint.PrecoPoint.repository.ListaRepository;
 import br.com.precopoint.PrecoPoint.service.ListaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -44,7 +47,6 @@ public class ListaProdutoController {
     public ResponseEntity<List<?>> getListaConsumidor(@Valid @RequestBody ConsumidorResponseDto consumidor, String lista) throws Exception {
         return listaService.getListaConsumidor(consumidor);
     }
-
     @PostMapping("getprodutos-lista")
     public ResponseEntity<List<?>> getProdutosByLista(@Valid @RequestBody ListaRequestDto listaRequestDto) throws Exception {
         return listaService.getProdutosByLista(listaRequestDto);
