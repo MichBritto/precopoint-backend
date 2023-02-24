@@ -5,6 +5,7 @@ import br.com.precopoint.PrecoPoint.dto.produto.FindProdutoRequest;
 import br.com.precopoint.PrecoPoint.dto.produto.ProdutoRequestDto;
 import br.com.precopoint.PrecoPoint.dto.usuario.StatusResponseDto;
 import br.com.precopoint.PrecoPoint.model.Produto;
+import br.com.precopoint.PrecoPoint.repository.CategoriaRepository;
 import br.com.precopoint.PrecoPoint.repository.FornecedorRepository;
 import br.com.precopoint.PrecoPoint.repository.ProdutoRepository;
 import br.com.precopoint.PrecoPoint.service.ProdutoService;
@@ -32,11 +33,15 @@ public class ProdutoServiceImpl implements ProdutoService {
 
     @Autowired
     AuthenticationController authenticationController;
+
+    @Autowired
+    CategoriaRepository categoriaRepository;
+
     @Override
     public ResponseEntity<StatusResponseDto> addProduto(ProdutoRequestDto request) throws Exception {
 
         try{
-            produtoRepository.save(request.toProuduto(fornecedorRepository));
+            produtoRepository.save(request.toProuduto(fornecedorRepository,categoriaRepository));
             ThreadContext.put("user", authenticationController.getUser());
             logger.info("Produto: "+request.getProduto() +" adicionado");
             return ResponseEntity.ok(statusService.produtoStatusTrue());
@@ -61,7 +66,6 @@ public class ProdutoServiceImpl implements ProdutoService {
             throw new Exception(e.getMessage());
         }
     }
-
     @Override
     public ResponseEntity<List<Produto>> getProdutoByNomeAsc(FindProdutoRequest findProdutoRequest) throws Exception {
         try {
