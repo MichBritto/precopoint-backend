@@ -1,7 +1,9 @@
 package br.com.precopoint.PrecoPoint.dto.produto;
 
+import br.com.precopoint.PrecoPoint.model.Categoria;
 import br.com.precopoint.PrecoPoint.model.Fornecedor;
 import br.com.precopoint.PrecoPoint.model.Produto;
+import br.com.precopoint.PrecoPoint.repository.CategoriaRepository;
 import br.com.precopoint.PrecoPoint.repository.FornecedorRepository;
 import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
@@ -35,9 +37,13 @@ public class ProdutoRequestDto {
     @NotBlank
     private String fornecedor;
 
-    public Produto toProuduto(FornecedorRepository fornecedorRepository){
+    @NotBlank
+    private String categoria;
+
+    public Produto toProuduto(FornecedorRepository fornecedorRepository, CategoriaRepository categoriaRepository){
         Produto produtoAux = new Produto();
         Optional<Fornecedor> fornecedorAux =  fornecedorRepository.findByNome(fornecedor);
+        Categoria categoriaAux = categoriaRepository.findByCategoria(categoria);
 
         produtoAux.setProduto(produto);
         produtoAux.setMarcaProduto(marcaProduto);
@@ -45,6 +51,7 @@ public class ProdutoRequestDto {
         produtoAux.setFornecedor(fornecedorAux.get());
         produtoAux.setImagem(imagem);
         produtoAux.setPreco(preco);
+        produtoAux.setCategoria(categoriaAux);
 
         return produtoAux;
     }

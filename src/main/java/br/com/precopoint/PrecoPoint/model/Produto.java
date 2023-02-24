@@ -18,7 +18,8 @@ public class Produto {
     private String imagem;
     private String descricao;
     private String marcaProduto;
-
+    @ManyToOne
+    private Categoria categoria;
     @ManyToOne
     @JoinColumn(name = "fornecedor_id")
     private Fornecedor fornecedor;

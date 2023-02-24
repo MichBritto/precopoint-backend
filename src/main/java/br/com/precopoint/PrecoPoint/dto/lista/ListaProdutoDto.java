@@ -1,6 +1,8 @@
 package br.com.precopoint.PrecoPoint.dto.lista;
 
+import br.com.precopoint.PrecoPoint.model.Lista;
 import br.com.precopoint.PrecoPoint.model.ListaProduto;
+import br.com.precopoint.PrecoPoint.model.Produto;
 import br.com.precopoint.PrecoPoint.repository.ListaRepository;
 import br.com.precopoint.PrecoPoint.repository.ProdutoRepository;
 import lombok.AllArgsConstructor;
@@ -24,8 +26,11 @@ public class ListaProdutoDto {
 
     public ListaProduto toLista(ProdutoRepository produtoRepository, ListaRepository listaRepository){
         ListaProduto listaProduto = new ListaProduto();
-        listaProduto.setProduto(produtoRepository.findById(Integer.parseInt(produto)).get());
-        listaProduto.setListaRelacionada(listaRepository.findById(Integer.parseInt(listaRelacionada)).get());
+        Lista lista = listaRepository.findById(Integer.parseInt(listaRelacionada)).get();
+        Produto produtoAux = produtoRepository.findById(Integer.parseInt(produto)).get();
+        listaProduto.setProduto(produtoAux);
+        listaProduto.setListaRelacionada(lista);
+        lista.setValorTotal(lista.getValorTotal() + produtoAux.getPreco());
         return listaProduto;
     }
 

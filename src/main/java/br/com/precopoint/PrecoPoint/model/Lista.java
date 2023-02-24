@@ -18,4 +18,6 @@ public class Lista {
     @ManyToOne
     private Consumidor consumidor;
 
+    private double valorTotal = 0;
+
 }
