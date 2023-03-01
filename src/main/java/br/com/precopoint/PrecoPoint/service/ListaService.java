@@ -16,4 +16,5 @@ public interface ListaService {
 
     public ResponseEntity<List<?>> getListaConsumidor(ConsumidorResponseDto consumidor) throws Exception;
     public ResponseEntity<List<?>> getProdutosByLista(ListaRequestDto listaRequestDto) throws Exception;
+    public ResponseEntity<?> getValorLista(ListaRequestDto listaRequestDto) throws Exception;
 }

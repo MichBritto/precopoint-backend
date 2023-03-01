@@ -1,7 +1,7 @@
 package br.com.precopoint.PrecoPoint.controller;
 
 
-import br.com.precopoint.PrecoPoint.dto.produto.FindProdutoRequest;
+import br.com.precopoint.PrecoPoint.dto.produto.FindProdutoRequestDto;
 import br.com.precopoint.PrecoPoint.dto.produto.ProdutoRequestDto;
 import br.com.precopoint.PrecoPoint.dto.usuario.StatusResponseDto;
 import br.com.precopoint.PrecoPoint.model.Produto;
@@ -11,7 +11,6 @@ import br.com.precopoint.PrecoPoint.service.ProdutoService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
@@ -48,8 +47,8 @@ public class ProdutoController{
         return produtoService.getProdutoAsc();
     }
     @PostMapping("list-produto-nome")//retorna a lista dos produtos em ordem de preco por nome
-    ResponseEntity<List<Produto>> getProdutoByNomeAsc(@Valid @RequestBody FindProdutoRequest findProdutoRequest) throws Exception {
-        return produtoService.getProdutoByNomeAsc(findProdutoRequest);
+    ResponseEntity<List<Produto>> getProdutoByNomeAsc(@Valid @RequestBody FindProdutoRequestDto findProdutoRequestDto) throws Exception {
+        return produtoService.getProdutoByNomeAsc(findProdutoRequestDto);
     }
 
 
