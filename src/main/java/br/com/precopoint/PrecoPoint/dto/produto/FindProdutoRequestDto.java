@@ -6,7 +6,7 @@ import lombok.Data;
 import javax.validation.constraints.NotBlank;
 
 @Data
-public class FindProdutoRequest {
+public class FindProdutoRequestDto {
 
     @NotBlank
     private String produto;

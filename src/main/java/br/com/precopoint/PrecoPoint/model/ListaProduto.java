@@ -29,4 +29,6 @@ public class ListaProduto {
     @JoinColumn(name = "lista_relacionada_id")
     private Lista listaRelacionada;
 
+    private int qtde;
+
 }

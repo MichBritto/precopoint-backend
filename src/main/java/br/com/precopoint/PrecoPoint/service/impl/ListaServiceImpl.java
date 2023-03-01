@@ -4,13 +4,12 @@ import br.com.precopoint.PrecoPoint.controller.AuthenticationController;
 import br.com.precopoint.PrecoPoint.dto.lista.ListaDonoDto;
 import br.com.precopoint.PrecoPoint.dto.lista.ListaProdutoDto;
 import br.com.precopoint.PrecoPoint.dto.lista.ListaRequestDto;
+import br.com.precopoint.PrecoPoint.dto.lista.ValorTotalResponseDto;
 import br.com.precopoint.PrecoPoint.dto.usuario.ConsumidorResponseDto;
 import br.com.precopoint.PrecoPoint.dto.usuario.StatusResponseDto;
 import br.com.precopoint.PrecoPoint.model.Consumidor;
-import br.com.precopoint.PrecoPoint.repository.ConsumidorRepository;
-import br.com.precopoint.PrecoPoint.repository.ListaProdutoRepository;
-import br.com.precopoint.PrecoPoint.repository.ListaRepository;
-import br.com.precopoint.PrecoPoint.repository.ProdutoRepository;
+import br.com.precopoint.PrecoPoint.model.Produto;
+import br.com.precopoint.PrecoPoint.repository.*;
 import br.com.precopoint.PrecoPoint.service.ListaService;
 import br.com.precopoint.PrecoPoint.service.StatusService;
 import org.apache.logging.log4j.ThreadContext;
@@ -35,6 +34,8 @@ public class ListaServiceImpl implements ListaService {
     ConsumidorRepository consumidorRepository;
     @Autowired
     ProdutoRepository produtoRepository;
+    @Autowired
+    FornecedorRepository fornecedorRepository;
     @Autowired
     StatusService statusService;
     @Autowired
@@ -91,5 +92,21 @@ public class ListaServiceImpl implements ListaService {
         }
     }
 
-
+    @Override
+    public ResponseEntity<?> getValorLista(ListaRequestDto listaRequestDto) throws Exception {
+        try{
+            List<Produto> produtos = listaProdutoRepository.findAllByLista(listaRequestDto.toLista());
+            ValorTotalResponseDto response = new ValorTotalResponseDto();
+            for(Produto produto : produtos){
+                response.setCarrefour(response.getCarrefour() + produtoRepository.findProdutoByFornecedor(produto.getProduto(),produto.getMarcaProduto(), fornecedorRepository.findById(1).get()).get().getPreco());
+                response.setExtra(response.getExtra() + produtoRepository.findProdutoByFornecedor(produto.getProduto(),produto.getMarcaProduto(), fornecedorRepository.findById(2).get()).get().getPreco());
+                response.setSemar(response.getSemar() + produtoRepository.findProdutoByFornecedor(produto.getProduto(),produto.getMarcaProduto(), fornecedorRepository.findById(3).get()).get().getPreco());
+                response.setLourencini(response.getLourencini() + produtoRepository.findProdutoByFornecedor(produto.getProduto(),produto.getMarcaProduto(), fornecedorRepository.findById(4).get()).get().getPreco());
+                response.setAtacadao(response.getAtacadao() + produtoRepository.findProdutoByFornecedor(produto.getProduto(),produto.getMarcaProduto(), fornecedorRepository.findById(5).get()).get().getPreco());
+            }
+            return ResponseEntity.ok(response);
+        }catch(Exception e){
+            throw new Exception(e.getMessage());
+        }
+    }
 }
