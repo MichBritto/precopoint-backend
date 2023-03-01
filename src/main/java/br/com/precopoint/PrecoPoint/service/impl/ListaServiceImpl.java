@@ -19,8 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class ListaServiceImpl implements ListaService {
@@ -97,14 +96,63 @@ public class ListaServiceImpl implements ListaService {
         try{
             List<Produto> produtos = listaProdutoRepository.findAllByLista(listaRequestDto.toLista());
             ValorTotalResponseDto response = new ValorTotalResponseDto();
+            Map<String, List<String>> produtosNaoEncontrados = new HashMap<>();
             for(Produto produto : produtos){
-                response.setCarrefour(response.getCarrefour() + produtoRepository.findProdutoByFornecedor(produto.getProduto(),produto.getMarcaProduto(), fornecedorRepository.findById(1).get()).get().getPreco());
-                response.setExtra(response.getExtra() + produtoRepository.findProdutoByFornecedor(produto.getProduto(),produto.getMarcaProduto(), fornecedorRepository.findById(2).get()).get().getPreco());
-                response.setSemar(response.getSemar() + produtoRepository.findProdutoByFornecedor(produto.getProduto(),produto.getMarcaProduto(), fornecedorRepository.findById(3).get()).get().getPreco());
-                response.setLourencini(response.getLourencini() + produtoRepository.findProdutoByFornecedor(produto.getProduto(),produto.getMarcaProduto(), fornecedorRepository.findById(4).get()).get().getPreco());
-                response.setAtacadao(response.getAtacadao() + produtoRepository.findProdutoByFornecedor(produto.getProduto(),produto.getMarcaProduto(), fornecedorRepository.findById(5).get()).get().getPreco());
+                Optional<Produto> carrefourProduto = produtoRepository.findProdutoByFornecedor(produto.getProduto(),produto.getMarcaProduto(), fornecedorRepository.findById(1).get());
+                Optional<Produto> extraProduto = produtoRepository.findProdutoByFornecedor(produto.getProduto(),produto.getMarcaProduto(), fornecedorRepository.findById(2).get());
+                Optional<Produto> semarProduto = produtoRepository.findProdutoByFornecedor(produto.getProduto(),produto.getMarcaProduto(), fornecedorRepository.findById(3).get());
+                Optional<Produto> lourenciniProduto = produtoRepository.findProdutoByFornecedor(produto.getProduto(),produto.getMarcaProduto(), fornecedorRepository.findById(4).get());
+                Optional<Produto> atacadaoProduto = produtoRepository.findProdutoByFornecedor(produto.getProduto(),produto.getMarcaProduto(), fornecedorRepository.findById(5).get());
+                //Carrefour
+                if (carrefourProduto.isPresent()) {
+                    response.setCarrefour(response.getCarrefour() + carrefourProduto.get().getPreco());
+                } else {
+                    if (!produtosNaoEncontrados.containsKey("carrefour")) {
+                        produtosNaoEncontrados.put("carrefour", new ArrayList<>()); // create a new list for products not found in Carrefour
+                    }
+                    produtosNaoEncontrados.get("carrefour").add(produto.getProduto()); // add the product to the list of products not found in Carrefour
+                }
+                //Extra
+                if (extraProduto.isPresent()) {
+                    response.setExtra(response.getExtra() + extraProduto.get().getPreco());
+                } else {
+                    if (!produtosNaoEncontrados.containsKey("extra")) {
+                        produtosNaoEncontrados.put("extra", new ArrayList<>());
+                    }
+                    produtosNaoEncontrados.get("extra").add(produto.getProduto());
+                }
+                //Semar
+                if (semarProduto.isPresent()) {
+                    response.setSemar(response.getSemar() + semarProduto.get().getPreco());
+                } else {
+                    if (!produtosNaoEncontrados.containsKey("semar")) {
+                        produtosNaoEncontrados.put("semar", new ArrayList<>());
+                    }
+                    produtosNaoEncontrados.get("semar").add(produto.getProduto());
+                }
+                //Lourencini
+                if (lourenciniProduto.isPresent()) {
+                    response.setLourencini(response.getLourencini() + lourenciniProduto.get().getPreco());
+                } else {
+                    if (!produtosNaoEncontrados.containsKey("lourencini")) {
+                        produtosNaoEncontrados.put("lourencini", new ArrayList<>());
+                    }
+                    produtosNaoEncontrados.get("lourencini").add(produto.getProduto());
+                }
+                //Atacadao
+                if (atacadaoProduto.isPresent()) {
+                    response.setAtacadao(response.getAtacadao() + atacadaoProduto.get().getPreco());
+                } else {
+                    if (!produtosNaoEncontrados.containsKey("atacadão")) {
+                        produtosNaoEncontrados.put("atacadão", new ArrayList<>());
+                    }
+                    produtosNaoEncontrados.get("atacadão").add(produto.getProduto());
+                }
             }
-            return ResponseEntity.ok(response);
+            Map<String, Object> result = new HashMap<>(); // create a map to hold the response values
+            result.put("fornecedores", response); // add the values for the supermarkets that did have the products
+            result.put("produtos-nao-encontrados", produtosNaoEncontrados); // add the map of products not found by supermarket to the response
+            return ResponseEntity.ok(result); // return the map as the JSON response
         }catch(Exception e){
             throw new Exception(e.getMessage());
         }
