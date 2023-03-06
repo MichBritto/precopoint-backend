@@ -14,7 +14,6 @@ import java.util.Optional;
 public interface ProdutoRepository extends JpaRepository<Produto, Integer> {
     Optional <Produto> findByProduto(String produto);
     Optional <Produto> findByFornecedor(Fornecedor fornecedor);
-    //Double sumPrecoByProdutoAndMarcaProdutoAndFornecedor(String produto, String marcaProduto, Fornecedor fornecedor);
     @Query("SELECT p FROM Produto p WHERE p.produto = :produto AND  p.marcaProduto = :marcaProduto AND " +
             "p.fornecedor = :fornecedor")
     Optional <Produto> findProdutoByFornecedor(@Param("produto") String nomeProduto, @Param("marcaProduto") String marcaProduto, @Param("fornecedor") Fornecedor fornecedor);
