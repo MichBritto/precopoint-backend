@@ -8,6 +8,10 @@ public interface StatusService {
     StatusResponseDto usuarioStatusFalse();
     StatusResponseDto produtoStatusTrue();
     StatusResponseDto produtoStatusFalse();
+    StatusResponseDto produtoRemovidoStatusTrue();
+    StatusResponseDto produtoRemovidoStatusFalse();
+    StatusResponseDto produtoAtualizadoStatusTrue();
+    StatusResponseDto produtoAtualizadoStatusFalse();
     StatusResponseDto listaStatusTrue();
     StatusResponseDto listaStatusFalse();
     StatusResponseDto addProdutoListaTrue();

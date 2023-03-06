@@ -38,6 +38,34 @@ public class StatusServiceImpl implements StatusService {
     }
 
     @Override
+    public StatusResponseDto produtoRemovidoStatusTrue() {
+        statusResponseDto.setMensagem("Produto removido com sucesso.");
+        statusResponseDto.setStatus(true);
+        return statusResponseDto;
+    }
+
+    @Override
+    public StatusResponseDto produtoRemovidoStatusFalse() {
+        statusResponseDto.setMensagem("Falha ao remover produto.");
+        statusResponseDto.setStatus(false);
+        return statusResponseDto;
+    }
+
+    @Override
+    public StatusResponseDto produtoAtualizadoStatusTrue() {
+        statusResponseDto.setMensagem("Produto atulizado com sucesso.");
+        statusResponseDto.setStatus(true);
+        return statusResponseDto;
+    }
+
+    @Override
+    public StatusResponseDto produtoAtualizadoStatusFalse() {
+        statusResponseDto.setMensagem("Falha ao atualizar produto.");
+        statusResponseDto.setStatus(false);
+        return statusResponseDto;
+    }
+
+    @Override
     public StatusResponseDto listaStatusTrue() {
         statusResponseDto.setMensagem("Lista criada com sucesso");
         statusResponseDto.setStatus(true);
