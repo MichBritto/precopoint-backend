@@ -94,10 +94,12 @@ public class ListaServiceImpl implements ListaService {
     @Override
     public ResponseEntity<?> getValorLista(ListaRequestDto listaRequestDto) throws Exception {
         try{
-            List<Produto> produtos = listaProdutoRepository.findAllByLista(listaRequestDto.toLista());
+            List<Object[]>  produtosAndQtde = listaProdutoRepository.findAllByLista(listaRequestDto.toLista());
             ValorTotalResponseDto response = new ValorTotalResponseDto();
             Map<String, List<String>> produtosNaoEncontrados = new HashMap<>();
-            for(Produto produto : produtos){
+            for(Object[] result : produtosAndQtde){
+                Produto produto = (Produto) result[0];
+                int qtde = (int) result[1];
                 Optional<Produto> carrefourProduto = produtoRepository.findProdutoByFornecedor(produto.getProduto(),produto.getMarcaProduto(), fornecedorRepository.findById(1).get());
                 Optional<Produto> extraProduto = produtoRepository.findProdutoByFornecedor(produto.getProduto(),produto.getMarcaProduto(), fornecedorRepository.findById(2).get());
                 Optional<Produto> semarProduto = produtoRepository.findProdutoByFornecedor(produto.getProduto(),produto.getMarcaProduto(), fornecedorRepository.findById(3).get());
@@ -105,7 +107,7 @@ public class ListaServiceImpl implements ListaService {
                 Optional<Produto> atacadaoProduto = produtoRepository.findProdutoByFornecedor(produto.getProduto(),produto.getMarcaProduto(), fornecedorRepository.findById(5).get());
                 //Carrefour
                 if (carrefourProduto.isPresent()) {
-                    response.setCarrefour(response.getCarrefour() + carrefourProduto.get().getPreco());
+                    response.setCarrefour(response.getCarrefour() + (carrefourProduto.get().getPreco() * qtde));
                 } else {
                     if (!produtosNaoEncontrados.containsKey("carrefour")) {
                         produtosNaoEncontrados.put("carrefour", new ArrayList<>()); // create a new list for products not found in Carrefour
@@ -114,7 +116,7 @@ public class ListaServiceImpl implements ListaService {
                 }
                 //Extra
                 if (extraProduto.isPresent()) {
-                    response.setExtra(response.getExtra() + extraProduto.get().getPreco());
+                    response.setExtra(response.getExtra() + (extraProduto.get().getPreco() * qtde));
                 } else {
                     if (!produtosNaoEncontrados.containsKey("extra")) {
                         produtosNaoEncontrados.put("extra", new ArrayList<>());
@@ -123,7 +125,7 @@ public class ListaServiceImpl implements ListaService {
                 }
                 //Semar
                 if (semarProduto.isPresent()) {
-                    response.setSemar(response.getSemar() + semarProduto.get().getPreco());
+                    response.setSemar(response.getSemar() + (semarProduto.get().getPreco() * qtde));
                 } else {
                     if (!produtosNaoEncontrados.containsKey("semar")) {
                         produtosNaoEncontrados.put("semar", new ArrayList<>());
@@ -132,7 +134,7 @@ public class ListaServiceImpl implements ListaService {
                 }
                 //Lourencini
                 if (lourenciniProduto.isPresent()) {
-                    response.setLourencini(response.getLourencini() + lourenciniProduto.get().getPreco());
+                    response.setLourencini(response.getLourencini() + (lourenciniProduto.get().getPreco() * qtde));
                 } else {
                     if (!produtosNaoEncontrados.containsKey("lourencini")) {
                         produtosNaoEncontrados.put("lourencini", new ArrayList<>());
@@ -141,7 +143,7 @@ public class ListaServiceImpl implements ListaService {
                 }
                 //Atacadao
                 if (atacadaoProduto.isPresent()) {
-                    response.setAtacadao(response.getAtacadao() + atacadaoProduto.get().getPreco());
+                    response.setAtacadao(response.getAtacadao() + (atacadaoProduto.get().getPreco() * qtde));
                 } else {
                     if (!produtosNaoEncontrados.containsKey("atacadão")) {
                         produtosNaoEncontrados.put("atacadão", new ArrayList<>());
