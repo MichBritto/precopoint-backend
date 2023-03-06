@@ -12,7 +12,6 @@ import java.util.List;
 
 @Repository
 public interface ListaProdutoRepository extends JpaRepository<ListaProduto, Integer> {
-
-    @Query("SELECT lp.produto FROM ListaProduto lp WHERE lp.listaRelacionada = :lista")
-    List<Produto> findAllByLista(@Param("lista") Lista lista);
+    @Query("SELECT lp.produto, lp.qtde FROM ListaProduto lp WHERE lp.listaRelacionada = :lista")
+    List<Object[]> findAllByLista(@Param("lista") Lista lista);
 }
