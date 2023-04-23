@@ -3,10 +3,9 @@ package br.com.precopoint.PrecoPoint.controller;
 import br.com.precopoint.PrecoPoint.config.security.TokenService;
 import br.com.precopoint.PrecoPoint.dto.login.LoginFormDto;
 import br.com.precopoint.PrecoPoint.dto.login.TokenDto;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import br.com.precopoint.PrecoPoint.exception.UnauthorizedException;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.ThreadContext;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,9 +21,8 @@ import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/auth")
+@Slf4j
 public class AuthenticationController {
-
-    private static Logger logger = LogManager.getLogger(ProdutoController.class);
     @Autowired
     AuthenticationManager authManager;
 
@@ -44,11 +42,10 @@ public class AuthenticationController {
             response.setTipo("Bearer");
             response.setToken(token);
             ThreadContext.put("user",login.getEmail());
-            logger.info("Usuario logado com sucesso");
+            log.info("Usuario logado com sucesso");
             return ResponseEntity.ok(response);
         }catch(AuthenticationException e){
-            logger.error("Exception: "+e.getMessage());
-            return ResponseEntity.badRequest().build();
+            throw new UnauthorizedException("Credenciais Invalidas");
         }
     }
 

@@ -5,11 +5,9 @@ import br.com.precopoint.PrecoPoint.model.Fornecedor;
 import br.com.precopoint.PrecoPoint.model.Produto;
 import br.com.precopoint.PrecoPoint.repository.CategoriaRepository;
 import br.com.precopoint.PrecoPoint.repository.FornecedorRepository;
-import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotBlank;

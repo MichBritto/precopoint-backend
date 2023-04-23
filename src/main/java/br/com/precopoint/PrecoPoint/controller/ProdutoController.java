@@ -3,9 +3,9 @@ package br.com.precopoint.PrecoPoint.controller;
 
 import br.com.precopoint.PrecoPoint.dto.produto.FindProdutoRequestDto;
 import br.com.precopoint.PrecoPoint.dto.produto.ProdutoRequestDto;
+import br.com.precopoint.PrecoPoint.dto.produto.ProdutoResponseDto;
 import br.com.precopoint.PrecoPoint.dto.produto.UpdateProdutoRequestDto;
 import br.com.precopoint.PrecoPoint.dto.usuario.StatusResponseDto;
-import br.com.precopoint.PrecoPoint.model.Produto;
 import br.com.precopoint.PrecoPoint.service.ProdutoService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -38,16 +38,16 @@ public class ProdutoController{
         return produtoService.updateProduto(request);
     }
     @GetMapping("list-produto") //retorna todos os produtos sem ordenação
-    ResponseEntity<List<Produto>> getProduto(){
+    ResponseEntity<List<ProdutoResponseDto>> getProduto(){
         return produtoService.getProduto();
     }
 
     @GetMapping("list-produto-asc") //retorna os produtos do menor preço para o maior
-    ResponseEntity<List<Produto>> getProdutoAsc() throws Exception {
+    ResponseEntity<List<ProdutoResponseDto>> getProdutoAsc() throws Exception {
         return produtoService.getProdutoAsc();
     }
     @PostMapping("list-produto-nome")//retorna a lista dos produtos em ordem de preco por nome
-    ResponseEntity<List<Produto>> getProdutoByNomeAsc(@Valid @RequestBody FindProdutoRequestDto findProdutoRequestDto) throws Exception {
+    ResponseEntity<List<ProdutoResponseDto>> getProdutoByNomeAsc(@Valid @RequestBody FindProdutoRequestDto findProdutoRequestDto) throws Exception {
         return produtoService.getProdutoByNomeAsc(findProdutoRequestDto);
     }
 

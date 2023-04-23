@@ -3,17 +3,20 @@ package br.com.precopoint.PrecoPoint.service.impl;
 import br.com.precopoint.PrecoPoint.controller.AuthenticationController;
 import br.com.precopoint.PrecoPoint.dto.produto.FindProdutoRequestDto;
 import br.com.precopoint.PrecoPoint.dto.produto.ProdutoRequestDto;
+import br.com.precopoint.PrecoPoint.dto.produto.ProdutoResponseDto;
 import br.com.precopoint.PrecoPoint.dto.produto.UpdateProdutoRequestDto;
 import br.com.precopoint.PrecoPoint.dto.usuario.StatusResponseDto;
+import br.com.precopoint.PrecoPoint.exception.DefaultException;
+import br.com.precopoint.PrecoPoint.exception.NotFoundException;
 import br.com.precopoint.PrecoPoint.model.Produto;
 import br.com.precopoint.PrecoPoint.repository.CategoriaRepository;
 import br.com.precopoint.PrecoPoint.repository.FornecedorRepository;
 import br.com.precopoint.PrecoPoint.repository.ProdutoRepository;
 import br.com.precopoint.PrecoPoint.service.ProdutoService;
 import br.com.precopoint.PrecoPoint.service.StatusService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.ThreadContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -21,8 +24,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@Slf4j
 public class ProdutoServiceImpl implements ProdutoService {
-    private static final Logger logger = LoggerFactory.getLogger(AuthenticationController.class);
     @Autowired
     ProdutoRepository produtoRepository;
 
@@ -40,74 +43,109 @@ public class ProdutoServiceImpl implements ProdutoService {
 
     @Override
     public ResponseEntity<StatusResponseDto> addProduto(ProdutoRequestDto request) throws Exception {
+        ThreadContext.put("user", authenticationController.getUser());
         try{
             produtoRepository.save(request.toProuduto(fornecedorRepository,categoriaRepository));
-            ThreadContext.put("user", authenticationController.getUser());
-            logger.info("Produto: "+request.getProduto() +" adicionado");
+
+            log.info("Produto '{}' adicionado",request.getProduto());
             return ResponseEntity.ok(statusService.produtoStatusTrue());
         }catch(Exception e){
-            ThreadContext.put("user", authenticationController.getUser());
-            logger.info(statusService.produtoStatusFalse().getMensagem());
-            return ResponseEntity.badRequest().body(statusService.produtoStatusFalse());
+            throw new DefaultException("Erro ao adicionar produto: "+ e.getMessage());
         }
     }
 
     @Override
     public ResponseEntity<StatusResponseDto> deleteProduto(FindProdutoRequestDto request) throws Exception {
+        ThreadContext.put("user", authenticationController.getUser());
         try{
-            Produto produto = produtoRepository.findById(Integer.parseInt(request.getProduto())).get();
+            Produto produto = produtoRepository.findById(Integer.parseInt(request.getProduto())).orElseThrow(
+                    () -> new NotFoundException("Erro: produto '"+ request.getProduto() +"' não encontrado"));
            produtoRepository.delete(produto);
-            ThreadContext.put("user", authenticationController.getUser());
-            logger.info("Produto: "+produto.getProduto() +" removido");
+            log.info("Produto '{}' removido com sucesso",produto.getProduto());
             return ResponseEntity.ok(statusService.produtoRemovidoStatusTrue());
+        }catch(NotFoundException e){
+            throw new NotFoundException(e.getMessage());
         }catch(Exception e){
-            ThreadContext.put("user", authenticationController.getUser());
-            logger.info(statusService.produtoStatusFalse().getMensagem());
-            return ResponseEntity.badRequest().body(statusService.produtoRemovidoStatusFalse());
+            throw new DefaultException("Erro ao remover produto: "+ e.getMessage());
         }
     }
 
     @Override
     public ResponseEntity<StatusResponseDto> updateProduto(UpdateProdutoRequestDto request) throws Exception {
+        ThreadContext.put("user", authenticationController.getUser());
         try{
-            Produto produto = produtoRepository.findById(Integer.parseInt(request.getFindProdutoRequestDto().getProduto())).get();
+            Produto produto = produtoRepository.findById(Integer.parseInt(request.getFindProdutoRequestDto().getProduto())).orElseThrow(
+                    () -> new NotFoundException("Erro ao atualizar produto: produto '" + request.getProdutoRequestDto().getProduto() +"' não encontrado")
+            );
             produto.setProduto(request.getProdutoRequestDto().getProduto());
             produto.setMarcaProduto(request.getProdutoRequestDto().getMarcaProduto());
-            produto.setCategoria(categoriaRepository.findById(Integer.parseInt(request.getProdutoRequestDto().getCategoria())).get());
+            produto.setCategoria(categoriaRepository.findById(Integer.parseInt(request.getProdutoRequestDto().getCategoria())).orElseThrow(
+                    () -> new NotFoundException("Erro ao atualizar produto: categoria '" + request.getProdutoRequestDto().getCategoria() +"' não encontrada")
+            ));
             produto.setPreco(request.getProdutoRequestDto().getPreco());
             produto.setImagem(request.getProdutoRequestDto().getImagem());
-            produto.setFornecedor(fornecedorRepository.findById(Integer.parseInt(request.getProdutoRequestDto().getFornecedor())).get());
+            produto.setFornecedor(fornecedorRepository.findById(Integer.parseInt(request.getProdutoRequestDto().getFornecedor())).orElseThrow(
+                    () -> new NotFoundException("Erro ao atualizar produto: fornecedor '" + request.getProdutoRequestDto().getFornecedor() +"' não encontrada")
+            ));
             produtoRepository.save(produto);
-            ThreadContext.put("user", authenticationController.getUser());
-            logger.info("Produto Id: "+produto.getId() +" atualizado");
+            log.info("Produto Id: "+produto.getId() +" atualizado com sucesso");
             return ResponseEntity.ok(statusService.produtoAtualizadoStatusTrue());
-        }catch(Exception e){
-            ThreadContext.put("user", authenticationController.getUser());
-            logger.info(statusService.produtoStatusFalse().getMensagem());
-            return ResponseEntity.badRequest().body(statusService.produtoAtualizadoStatusFalse());
+        }catch(NotFoundException e){
+            throw new NotFoundException(e.getMessage());
+        }
+        catch(Exception e){
+            throw new DefaultException("Erro ao atualizar dados de produto: "+ e.getMessage());
         }
     }
 
     @Override
-    public ResponseEntity<List<Produto>> getProduto() {
-        return ResponseEntity.ok(produtoRepository.findAll());
-    }
-
-    @Override
-    public ResponseEntity<List<Produto>> getProdutoAsc() throws Exception {
-        try {
-            return ResponseEntity.ok(produtoRepository.findAllByOrderByPrecoAsc());
+    public ResponseEntity<List<ProdutoResponseDto>> getProduto() {
+        try{
+            ModelMapper modelMapper = new ModelMapper();
+            List<ProdutoResponseDto> list = produtoRepository.findAll().stream()
+                    .map(produto -> {
+                        ProdutoResponseDto produtoResponseDto = modelMapper.map(produto, ProdutoResponseDto.class);
+                        produtoResponseDto.setFornecedor(produto.getFornecedor().getNome());
+                        produtoResponseDto.setCategoria(produto.getCategoria().getCategoria());
+                        return produtoResponseDto;
+                    }).toList();
+            return ResponseEntity.ok(list);
         }catch (Exception e){
-            throw new Exception(e.getMessage());
+            throw new DefaultException("Erro ao pegar produtos: "+ e.getMessage());
         }
     }
 
     @Override
-    public ResponseEntity<List<Produto>> getProdutoByNomeAsc(FindProdutoRequestDto findProdutoRequestDto) throws Exception {
-        try {
-            return ResponseEntity.ok(produtoRepository.findAllByProdutoOrderByPrecoAsc(findProdutoRequestDto.getProduto()));
+    public ResponseEntity<List<ProdutoResponseDto>> getProdutoAsc() throws Exception {
+        try{
+            ModelMapper modelMapper = new ModelMapper();
+            List<ProdutoResponseDto> list = produtoRepository.findAllByOrderByPrecoAsc().stream()
+                    .map(produto -> {
+                        ProdutoResponseDto produtoResponseDto = modelMapper.map(produto, ProdutoResponseDto.class);
+                        produtoResponseDto.setFornecedor(produto.getFornecedor().getNome());
+                        produtoResponseDto.setCategoria(produto.getCategoria().getCategoria());
+                        return produtoResponseDto;
+                    }).toList();
+            return ResponseEntity.ok(list);
         }catch (Exception e){
-            throw new Exception(e.getMessage());
+            throw new DefaultException("Erro ao pegar produtos: "+ e.getMessage());
+        }
+    }
+
+    @Override
+    public ResponseEntity<List<ProdutoResponseDto>> getProdutoByNomeAsc(FindProdutoRequestDto findProdutoRequestDto) throws Exception {
+        try{
+            ModelMapper modelMapper = new ModelMapper();
+            List<ProdutoResponseDto> list = produtoRepository.findAllByProdutoOrderByPrecoAsc(findProdutoRequestDto.getProduto()).stream()
+                    .map(produto -> {
+                        ProdutoResponseDto produtoResponseDto = modelMapper.map(produto, ProdutoResponseDto.class);
+                        produtoResponseDto.setFornecedor(produto.getFornecedor().getNome());
+                        produtoResponseDto.setCategoria(produto.getCategoria().getCategoria());
+                        return produtoResponseDto;
+                    }).toList();
+            return ResponseEntity.ok(list);
+        }catch (Exception e){
+            throw new DefaultException("Erro ao pegar produtos: "+ e.getMessage());
         }
     }
 }

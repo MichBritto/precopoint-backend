@@ -10,9 +10,10 @@ import lombok.Setter;
 @NoArgsConstructor
 public class FornecedorResponseDto {
 
+    private String id;
     private String nome;
     private String email;
     private String endereco;
-    private String cnpj;
     private String logotipo;
+
 }

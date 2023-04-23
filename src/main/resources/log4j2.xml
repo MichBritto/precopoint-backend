@@ -8,13 +8,16 @@
             <Column name="USER" pattern="%X{user}" />
             <Column name="EVENT_DATE" isEventTimestamp="true" />
             <Column name="LEVEL" pattern="%level" />
-            <Column name="LOGGER" pattern="%logger{36}" />
+            <Column name="LOGGER" pattern="%logger{0}" />
             <Column name="MSG" pattern="%message" />
             <Column name="THROWABLE" pattern="%ex{full}" />
         </JDBC>
     </Appenders>
     <Loggers>
         <Logger name="br.com.precopoint.PrecoPoint.controller" level="INFO">
+            <AppenderRef ref="database"/>
+        </Logger>
+        <Logger name="br.com.precopoint.PrecoPoint.service" level="INFO">
             <AppenderRef ref="database"/>
         </Logger>
         <Root level="INFO">

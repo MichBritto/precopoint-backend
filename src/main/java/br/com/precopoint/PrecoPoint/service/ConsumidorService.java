@@ -7,5 +7,6 @@ import org.springframework.http.ResponseEntity;
 
 public interface ConsumidorService {
 
-    ResponseEntity<StatusResponseDto> addConsumidor(ConsumidorRequestDto consumidor) throws Exception;
+    ResponseEntity<StatusResponseDto> addConsumidor(ConsumidorRequestDto consumidor);
+    ResponseEntity<?> getAllConsumidor();
 }

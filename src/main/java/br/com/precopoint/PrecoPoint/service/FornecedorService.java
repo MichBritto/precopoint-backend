@@ -6,5 +6,6 @@ import org.springframework.http.ResponseEntity;
 
 
 public interface FornecedorService {
-    ResponseEntity<StatusResponseDto> addFornecedor(FornecedorRequestDto fornecedor) throws Exception;
+    ResponseEntity<StatusResponseDto> addFornecedor(FornecedorRequestDto fornecedor);
+    ResponseEntity<?> getAllFornecedor();
 }
