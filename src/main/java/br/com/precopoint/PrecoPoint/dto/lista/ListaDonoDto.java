@@ -1,15 +1,13 @@
 package br.com.precopoint.PrecoPoint.dto.lista;
 
 
-import br.com.precopoint.PrecoPoint.model.Consumidor;
+import br.com.precopoint.PrecoPoint.exception.NotFoundException;
 import br.com.precopoint.PrecoPoint.model.Lista;
 import br.com.precopoint.PrecoPoint.repository.ConsumidorRepository;
-import br.com.precopoint.PrecoPoint.repository.ListaRepository;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
@@ -27,7 +25,9 @@ public class ListaDonoDto {
     public Lista toLista(ConsumidorRepository consumidorRepository){
         Lista lista = new Lista();
         lista.setNomeLista(nomeLista);
-        lista.setConsumidor(consumidorRepository.findById(consumidor).get());
+        lista.setConsumidor(consumidorRepository.findById(consumidor).orElseThrow(
+                () -> new NotFoundException("Erro: usuário não encontrado no sistema.")
+        ));
         return lista;
     }
 }

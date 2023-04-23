@@ -7,6 +7,7 @@ import org.springframework.security.core.GrantedAuthority;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import java.util.Collection;
+import java.util.Collections;
 
 @Data
 @NoArgsConstructor
@@ -14,12 +15,9 @@ import java.util.Collection;
 @Table(name = "consumidor")
 public class Consumidor extends Usuario{
 
-
-
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return Collections.emptyList();
     }
 
     @Override

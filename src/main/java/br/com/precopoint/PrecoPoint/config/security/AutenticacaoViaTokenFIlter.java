@@ -1,11 +1,9 @@
 package br.com.precopoint.PrecoPoint.config.security;
 
+import br.com.precopoint.PrecoPoint.exception.NotFoundException;
 import br.com.precopoint.PrecoPoint.model.Usuario;
 import br.com.precopoint.PrecoPoint.repository.ConsumidorRepository;
 import br.com.precopoint.PrecoPoint.repository.FornecedorRepository;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.ThreadContext;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -17,11 +15,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class AutenticacaoViaTokenFIlter extends OncePerRequestFilter {
-
-    private static Logger logger = LogManager.getLogger(AutenticacaoViaTokenFIlter.class);
     private TokenService tokenService;
-    private ConsumidorRepository consumidorRepository;
-    private FornecedorRepository fornecedorRepository;
+    private final ConsumidorRepository consumidorRepository;
+    private final FornecedorRepository fornecedorRepository;
 
     public AutenticacaoViaTokenFIlter (TokenService tokenService, ConsumidorRepository consumidorRepository, FornecedorRepository fornecedorRepository){
         this.tokenService =  tokenService;
@@ -42,15 +38,19 @@ public class AutenticacaoViaTokenFIlter extends OncePerRequestFilter {
     private void autenticarCliente(String token) {
         String emailUsuario = this.tokenService.getEmailUsuario(token);
         Usuario usuario = null;
-        if(fornecedorRepository.findByEmail(emailUsuario).isEmpty()){
-            usuario = consumidorRepository.findByEmail(emailUsuario).get();
 
+        if(fornecedorRepository.findByEmail(emailUsuario).isEmpty()){
+            usuario = consumidorRepository.findByEmail(emailUsuario).orElseThrow(
+                    () -> new NotFoundException("Consumidor não encontrado")
+            );
         }
-        else
-            usuario = fornecedorRepository.findByEmail(emailUsuario).get();
+        else{
+            usuario = fornecedorRepository.findByEmail(emailUsuario).orElseThrow(
+                    () -> new NotFoundException("Fornecedor não encontrado")
+            );
+        }
 
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(usuario, null, usuario.getAuthorities());
-
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 
@@ -60,8 +60,6 @@ public class AutenticacaoViaTokenFIlter extends OncePerRequestFilter {
         if (token == null || token.isEmpty() || !token.startsWith("Bearer ")) {
             return null;
         }
-
-        //ThreadContext.put("userName",  usuario.getUsername());
         return token.substring(7, token.length());
     }
 }

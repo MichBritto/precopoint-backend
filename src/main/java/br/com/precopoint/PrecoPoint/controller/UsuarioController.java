@@ -8,12 +8,15 @@ import br.com.precopoint.PrecoPoint.service.FornecedorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.validation.Valid;
 
 @Controller
-@RequestMapping("add-usuario")
+@RequestMapping("usuario")
 public class UsuarioController {
 
 
@@ -22,15 +25,25 @@ public class UsuarioController {
     @Autowired
     FornecedorService fornecedorService;
 
-    @PostMapping("consumidor")
+    @PostMapping("add-consumidor")
     public ResponseEntity<StatusResponseDto> addConsumidor(@RequestBody @Valid ConsumidorRequestDto consumidor) throws Exception {
         return consumidorService.addConsumidor(consumidor);
     }
 
 
-    @PostMapping("fornecedor")
+    @PostMapping("add-fornecedor")
     public ResponseEntity<StatusResponseDto> addFornecedor(@RequestBody @Valid FornecedorRequestDto fornecedor) throws Exception{
         return fornecedorService.addFornecedor(fornecedor);
+    }
+
+    @GetMapping("get-all-consumidor")
+    public ResponseEntity<?> getAllConsumidor(){
+        return consumidorService.getAllConsumidor();
+    }
+
+    @GetMapping("get-all-fornecedor")
+    public ResponseEntity<?> getAllFornecedor(){
+        return fornecedorService.getAllFornecedor();
     }
 
 }

@@ -1,5 +1,6 @@
 package br.com.precopoint.PrecoPoint.dto.lista;
 
+import br.com.precopoint.PrecoPoint.exception.NotFoundException;
 import br.com.precopoint.PrecoPoint.model.Lista;
 import br.com.precopoint.PrecoPoint.model.ListaProduto;
 import br.com.precopoint.PrecoPoint.model.Produto;
@@ -26,8 +27,12 @@ public class ListaProdutoDto {
 
     public ListaProduto toLista(ProdutoRepository produtoRepository, ListaRepository listaRepository){
         ListaProduto listaProduto = new ListaProduto();
-        Lista lista = listaRepository.findById(Integer.parseInt(listaRelacionada)).get();
-        Produto produtoAux = produtoRepository.findById(Integer.parseInt(produto)).get();
+        Lista lista = listaRepository.findById(Integer.parseInt(listaRelacionada)).orElseThrow(
+                () -> new NotFoundException("Erro: lista não encontrada.")
+        );
+        Produto produtoAux = produtoRepository.findById(Integer.parseInt(produto)).orElseThrow(
+                () -> new NotFoundException("Erro: produto não encontrado.")
+        );
         listaProduto.setProduto(produtoAux);
         listaProduto.setListaRelacionada(lista);
         lista.setValorTotal(lista.getValorTotal() + produtoAux.getPreco());
