@@ -4,6 +4,7 @@ import br.com.precopoint.PrecoPoint.controller.AuthenticationController;
 import br.com.precopoint.PrecoPoint.dto.usuario.ConsumidorRequestDto;
 import br.com.precopoint.PrecoPoint.dto.usuario.ConsumidorResponseDto;
 import br.com.precopoint.PrecoPoint.dto.usuario.StatusResponseDto;
+import br.com.precopoint.PrecoPoint.dto.usuario.UpdateConsumidorRequestDto;
 import br.com.precopoint.PrecoPoint.exception.AlreadyExistsException;
 import br.com.precopoint.PrecoPoint.exception.DefaultException;
 import br.com.precopoint.PrecoPoint.exception.NotFoundException;
@@ -18,6 +19,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -66,6 +68,31 @@ public class ConsumidorServiceImpl implements ConsumidorService {
 
         }catch (Exception e){
             throw new DefaultException("Erro ao pegar usuários: "+ e.getMessage());
+        }
+    }
+
+    @Override
+    public ResponseEntity<?> updateConsumidor(int idConsumidor, UpdateConsumidorRequestDto updateConsumidorRequestDto) {
+        try{
+            Consumidor consumidor = consumidorRepository.findById(idConsumidor).orElseThrow(
+                    () -> new NotFoundException("Erro: usuário com id '"+ idConsumidor +"' não encontrado."));
+            if(updateConsumidorRequestDto.getEndereco() != null && !updateConsumidorRequestDto.getEndereco().trim().isEmpty() ){
+                consumidor.setEndereco(updateConsumidorRequestDto.getEndereco());
+            }
+            if(updateConsumidorRequestDto.getNome() != null && !updateConsumidorRequestDto.getNome().trim().isEmpty()){
+                consumidor.setNome(updateConsumidorRequestDto.getNome());
+            }
+            if(updateConsumidorRequestDto.getSenha() != null && !updateConsumidorRequestDto.getSenha().trim().isEmpty()){
+                BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+                String senhaCrypt = passwordEncoder.encode(updateConsumidorRequestDto.getSenha());
+                consumidor.setSenha(senhaCrypt);
+            }
+            consumidorRepository.save(consumidor);
+            return ResponseEntity.ok(consumidor);
+        }catch(NotFoundException e) {
+            throw new NotFoundException(e.getMessage());
+        }catch(Exception e) {
+            throw new DefaultException("Erro ao atualizar usuário: "+ e.getMessage());
         }
     }
 
