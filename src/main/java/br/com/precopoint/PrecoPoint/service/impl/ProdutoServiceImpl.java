@@ -1,10 +1,7 @@
 package br.com.precopoint.PrecoPoint.service.impl;
 
 import br.com.precopoint.PrecoPoint.controller.AuthenticationController;
-import br.com.precopoint.PrecoPoint.dto.produto.FindProdutoRequestDto;
-import br.com.precopoint.PrecoPoint.dto.produto.ProdutoRequestDto;
-import br.com.precopoint.PrecoPoint.dto.produto.ProdutoResponseDto;
-import br.com.precopoint.PrecoPoint.dto.produto.UpdateProdutoRequestDto;
+import br.com.precopoint.PrecoPoint.dto.produto.*;
 import br.com.precopoint.PrecoPoint.dto.usuario.StatusResponseDto;
 import br.com.precopoint.PrecoPoint.exception.DefaultException;
 import br.com.precopoint.PrecoPoint.exception.NotFoundException;
@@ -71,33 +68,40 @@ public class ProdutoServiceImpl implements ProdutoService {
     }
 
     @Override
-    public ResponseEntity<StatusResponseDto> updateProduto(UpdateProdutoRequestDto request) throws Exception {
-        ThreadContext.put("user", authenticationController.getUser());
+    public ResponseEntity<?> updateProduto(int produtoId, UpdateProdutoRequestDto produtoDetails){
         try{
-            Produto produto = produtoRepository.findById(Integer.parseInt(request.getFindProdutoRequestDto().getProduto())).orElseThrow(
-                    () -> new NotFoundException("Erro ao atualizar produto: produto '" + request.getProdutoRequestDto().getProduto() +"' não encontrado")
-            );
-            produto.setProduto(request.getProdutoRequestDto().getProduto());
-            produto.setMarcaProduto(request.getProdutoRequestDto().getMarcaProduto());
-            produto.setCategoria(categoriaRepository.findById(Integer.parseInt(request.getProdutoRequestDto().getCategoria())).orElseThrow(
-                    () -> new NotFoundException("Erro ao atualizar produto: categoria '" + request.getProdutoRequestDto().getCategoria() +"' não encontrada")
-            ));
-            produto.setPreco(request.getProdutoRequestDto().getPreco());
-            produto.setImagem(request.getProdutoRequestDto().getImagem());
-            produto.setFornecedor(fornecedorRepository.findById(Integer.parseInt(request.getProdutoRequestDto().getFornecedor())).orElseThrow(
-                    () -> new NotFoundException("Erro ao atualizar produto: fornecedor '" + request.getProdutoRequestDto().getFornecedor() +"' não encontrada")
-            ));
+            Produto produto = produtoRepository.findById(produtoId)
+                    .orElseThrow(() -> new NotFoundException("Produto não encontrado para este id: " + produtoId));
+
+            if (produtoDetails.getProduto() != null) {
+                produto.setProduto(produtoDetails.getProduto());
+            }
+            if (produtoDetails.getPreco() != 0.0) {
+                produto.setPreco(produtoDetails.getPreco());
+            }
+            if (produtoDetails.getDescricao() != null) {
+                produto.setDescricao(produtoDetails.getDescricao());
+            }
+            if(produtoDetails.getMarcaProduto() != null) {
+                produto.setMarcaProduto(produtoDetails.getMarcaProduto());
+            }
+            if(produtoDetails.getCategoria() != null) {
+                categoriaRepository.findByCategoria(produtoDetails.getCategoria()).ifPresent(produto::setCategoria);
+            }
+            if(produtoDetails.getFornecedor() != null) {
+                fornecedorRepository.findByNome(produtoDetails.getFornecedor()).ifPresent(produto::setFornecedor);
+            }
+            if(produtoDetails.getImagem() != null) {
+                produto.setImagem(produtoDetails.getImagem());
+            }
             produtoRepository.save(produto);
-            log.info("Produto Id: "+produto.getId() +" atualizado com sucesso");
             return ResponseEntity.ok(statusService.produtoAtualizadoStatusTrue());
-        }catch(NotFoundException e){
-            throw new NotFoundException(e.getMessage());
-        }
-        catch(Exception e){
-            throw new DefaultException("Erro ao atualizar dados de produto: "+ e.getMessage());
+        }catch(NotFoundException e) {
+            throw new DefaultException(e.getMessage());
+        }catch(Exception e) {
+            throw new DefaultException("Erro ao atualizar produto: "+ e.getMessage());
         }
     }
-
     @Override
     public ResponseEntity<List<ProdutoResponseDto>> getProduto() {
         try{

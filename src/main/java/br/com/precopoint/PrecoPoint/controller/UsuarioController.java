@@ -3,15 +3,14 @@ package br.com.precopoint.PrecoPoint.controller;
 import br.com.precopoint.PrecoPoint.dto.usuario.ConsumidorRequestDto;
 import br.com.precopoint.PrecoPoint.dto.usuario.FornecedorRequestDto;
 import br.com.precopoint.PrecoPoint.dto.usuario.StatusResponseDto;
+import br.com.precopoint.PrecoPoint.dto.usuario.UpdateConsumidorRequestDto;
 import br.com.precopoint.PrecoPoint.service.ConsumidorService;
 import br.com.precopoint.PrecoPoint.service.FornecedorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -46,4 +45,9 @@ public class UsuarioController {
         return fornecedorService.getAllFornecedor();
     }
 
+    @Transactional
+    @PutMapping("update-consumidor/{id}")
+    public ResponseEntity<?> updateConsumidor(@PathVariable(name = "id") int idConsumidor,@RequestBody UpdateConsumidorRequestDto updateConsumidorRequestDto){
+        return consumidorService.updateConsumidor(idConsumidor, updateConsumidorRequestDto);
+    }
 }

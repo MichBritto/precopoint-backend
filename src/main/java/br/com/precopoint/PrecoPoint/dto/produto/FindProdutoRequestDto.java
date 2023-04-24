@@ -7,7 +7,6 @@ import javax.validation.constraints.NotBlank;
 
 @Data
 public class FindProdutoRequestDto {
-
     @NotBlank
     private String produto;
 

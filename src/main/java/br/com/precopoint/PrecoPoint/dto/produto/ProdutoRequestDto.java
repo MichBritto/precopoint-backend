@@ -1,5 +1,6 @@
 package br.com.precopoint.PrecoPoint.dto.produto;
 
+import br.com.precopoint.PrecoPoint.exception.NotFoundException;
 import br.com.precopoint.PrecoPoint.model.Categoria;
 import br.com.precopoint.PrecoPoint.model.Fornecedor;
 import br.com.precopoint.PrecoPoint.model.Produto;
@@ -11,16 +12,11 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotBlank;
-import java.util.Optional;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProdutoRequestDto {
-
-
-
-
     @NotBlank
     private String produto;
     @DecimalMin(value = "0.1", inclusive = true)
@@ -40,13 +36,15 @@ public class ProdutoRequestDto {
 
     public Produto toProuduto(FornecedorRepository fornecedorRepository, CategoriaRepository categoriaRepository){
         Produto produtoAux = new Produto();
-        Optional<Fornecedor> fornecedorAux =  fornecedorRepository.findByNome(fornecedor);
-        Categoria categoriaAux = categoriaRepository.findByCategoria(categoria);
+        Fornecedor fornecedorAux =  fornecedorRepository.findByNome(fornecedor).orElseThrow(
+                () -> new NotFoundException("Fornecedor '"+ fornecedor +"' não encontrado."));
+        Categoria categoriaAux = categoriaRepository.findByCategoria(categoria).orElseThrow(
+                () ->  new NotFoundException("Categoria '"+ categoria +"' não encontrada."));
 
         produtoAux.setProduto(produto);
         produtoAux.setMarcaProduto(marcaProduto);
         produtoAux.setDescricao(descricao);
-        produtoAux.setFornecedor(fornecedorAux.get());
+        produtoAux.setFornecedor(fornecedorAux);
         produtoAux.setImagem(imagem);
         produtoAux.setPreco(preco);
         produtoAux.setCategoria(categoriaAux);

@@ -3,7 +3,6 @@ package br.com.precopoint.PrecoPoint.service.impl;
 import br.com.precopoint.PrecoPoint.controller.AuthenticationController;
 import br.com.precopoint.PrecoPoint.dto.lista.*;
 import br.com.precopoint.PrecoPoint.dto.produto.ProdutoResponseDto;
-import br.com.precopoint.PrecoPoint.dto.usuario.ConsumidorResponseDto;
 import br.com.precopoint.PrecoPoint.dto.usuario.StatusResponseDto;
 import br.com.precopoint.PrecoPoint.exception.DefaultException;
 import br.com.precopoint.PrecoPoint.exception.NotFoundException;
@@ -69,7 +68,7 @@ public class ListaServiceImpl implements ListaService {
     }
 
     @Override
-    public ResponseEntity<List<?>> getListaConsumidor(ConsumidorResponseDto consumidor) {
+    public ResponseEntity<List<?>> getListaConsumidor(ListasDeConsumidorRequestDto consumidor) {
         try{
             ModelMapper modelMapper = new ModelMapper();
             Consumidor consumidorAux = consumidorRepository.findByEmail(consumidor.getEmail()).orElseThrow(
