@@ -17,8 +17,6 @@ import javax.validation.Valid;
 @Controller
 @RequestMapping("usuario")
 public class UsuarioController {
-
-
     @Autowired
     ConsumidorService consumidorService;
     @Autowired
@@ -28,7 +26,6 @@ public class UsuarioController {
     public ResponseEntity<StatusResponseDto> addConsumidor(@RequestBody @Valid ConsumidorRequestDto consumidor) throws Exception {
         return consumidorService.addConsumidor(consumidor);
     }
-
 
     @PostMapping("add-fornecedor")
     public ResponseEntity<StatusResponseDto> addFornecedor(@RequestBody @Valid FornecedorRequestDto fornecedor) throws Exception{

@@ -152,4 +152,73 @@ public class ProdutoServiceImpl implements ProdutoService {
             throw new DefaultException("Erro ao pegar produtos: "+ e.getMessage());
         }
     }
+
+    @Override
+    public ResponseEntity<List<ProdutoResponseDto>> filterProdutos(String produto, Double precoMin, Double precoMax) {
+        try{
+            List<ProdutoResponseDto> listResponse = null;
+            ModelMapper modelMapper = new ModelMapper();
+
+            if(precoMin > precoMax){
+                throw new DefaultException("'Preço Mínimo' deve ser maior que 'Preço Máximo'");
+            }
+            if((produto != null && !produto.isEmpty()) && precoMin != null  && precoMax != null){
+                listResponse = produtoRepository.findByProdutoAndPrecoBetween(produto,precoMin,precoMax)
+                        .stream()
+                        .map(produtoAux -> {
+                            return modelMapper.map(produtoAux, ProdutoResponseDto.class);
+                        }).toList();
+            }
+            else if(precoMin != null  && precoMax != null){
+                listResponse = produtoRepository.findByPrecoBetween(precoMin, precoMax)
+                        .stream()
+                        .map(produtoAux -> {
+                            return modelMapper.map(produtoAux, ProdutoResponseDto.class);
+                        }).toList();
+            }
+            else if((produto != null && !produto.isEmpty()) && precoMin != null){
+                listResponse = produtoRepository.findByProdutoAndPrecoMin(produto,precoMin)
+                        .stream()
+                        .map(produtoAux -> {
+                            return modelMapper.map(produtoAux, ProdutoResponseDto.class);
+                        }).toList();
+            }
+            else if((produto != null && !produto.isEmpty()) && precoMax != null){
+                listResponse = produtoRepository.findByProdutoAndPrecoMax(produto,precoMax)
+                        .stream()
+                        .map(produtoAux -> {
+                            return modelMapper.map(produtoAux, ProdutoResponseDto.class);
+                        }).toList();
+            }
+            else if(precoMin != null){
+                listResponse = produtoRepository.findByPrecoMin(precoMin)
+                        .stream()
+                        .map(produtoAux -> {
+                            return modelMapper.map(produtoAux, ProdutoResponseDto.class);
+                        }).toList();
+            }
+            else if(precoMax != null){
+                listResponse = produtoRepository.findByPrecoMax(precoMax)
+                        .stream()
+                        .map(produtoAux -> {
+                            return modelMapper.map(produtoAux, ProdutoResponseDto.class);
+                        }).toList();
+            }
+            else if(produto != null && !produto.isEmpty()){
+                listResponse = produtoRepository.findByProdutoList(produto)
+                        .stream()
+                        .map(produtoAux -> {
+                            return modelMapper.map(produtoAux, ProdutoResponseDto.class);
+                        }).toList();
+            }
+            else{
+                throw new DefaultException("Pelo menos um parametro deve ser passado.");
+            }
+            return ResponseEntity.ok(listResponse);
+        }catch(DefaultException e) {
+            throw new DefaultException(e.getMessage());
+        }catch(Exception e) {
+            throw new DefaultException("Erro ao filtrar produtos: "+ e.getMessage());
+        }
+    }
 }
