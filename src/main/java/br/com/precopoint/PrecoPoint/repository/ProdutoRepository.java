@@ -20,4 +20,19 @@ public interface ProdutoRepository extends JpaRepository<Produto, Integer> {
 
     List<Produto> findAllByOrderByPrecoAsc();
     List<Produto> findAllByProdutoOrderByPrecoAsc(String nome);
+
+    @Query("SELECT p FROM Produto p WHERE p.preco <= :precoMax")
+    List<Produto> findByPrecoMax(@Param("precoMax") double precoMax);
+    @Query("SELECT p FROM Produto p WHERE p.preco >= :precoMin")
+    List<Produto> findByPrecoMin(@Param("precoMin") double precoMin);
+    @Query("SELECT p FROM Produto p WHERE p.produto = :produto")
+    List<Produto> findByProdutoList(@Param("produto") String produto);
+    @Query("SELECT p FROM Produto p WHERE p.preco >= :precoMin AND p.preco <= :precoMax")
+    List<Produto> findByPrecoBetween( @Param("precoMin") double precoMin, @Param("precoMax") double precoMax);
+    @Query("SELECT p FROM Produto p WHERE p.produto = :produto AND p.preco >= :precoMin")
+    List<Produto> findByProdutoAndPrecoMin(@Param("produto") String nome, @Param("precoMin") double precoMin);
+    @Query("SELECT p FROM Produto p WHERE p.produto = :produto AND p.preco >= :precoMax")
+    List<Produto> findByProdutoAndPrecoMax(@Param("produto") String nome, @Param("precoMax") double precoMax);
+    @Query("SELECT p FROM Produto p WHERE p.produto = :produto AND p.preco >= :precoMin AND p.preco <= :precoMax")
+    List<Produto> findByProdutoAndPrecoBetween(@Param("produto") String nome, @Param("precoMin") double precoMin, @Param("precoMax") double precoMax);
 }

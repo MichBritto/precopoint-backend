@@ -43,5 +43,10 @@ public class ProdutoController{
         return produtoService.getProdutoByNomeAsc(findProdutoRequestDto);
     }
 
-
+    @GetMapping("filter-produtos")
+    ResponseEntity<?> getProdutosByFilter(@RequestParam(name = "produto", required = false) String produto,
+                                          @RequestParam(name = "precoMin", required = false) Double precoMin,
+                                          @RequestParam(name = "precoMax", required = false) Double precoMax){
+        return produtoService.filterProdutos(produto,precoMin,precoMax);
+    }
 }

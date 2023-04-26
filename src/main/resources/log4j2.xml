@@ -20,6 +20,9 @@
         <Logger name="br.com.precopoint.PrecoPoint.service" level="INFO">
             <AppenderRef ref="database"/>
         </Logger>
+        <Logger name="br.com.precopoint.PrecoPoint.common" level="INFO">
+            <AppenderRef ref="database"/>
+        </Logger>
         <Root level="INFO">
             <AppenderRef ref="console"/>
         </Root>
