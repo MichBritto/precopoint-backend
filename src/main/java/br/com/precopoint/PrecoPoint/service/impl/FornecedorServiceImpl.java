@@ -11,6 +11,7 @@ import br.com.precopoint.PrecoPoint.exception.AlreadyExistsException;
 import br.com.precopoint.PrecoPoint.exception.DefaultException;
 import br.com.precopoint.PrecoPoint.exception.NotFoundException;
 import br.com.precopoint.PrecoPoint.model.Usuario;
+import br.com.precopoint.PrecoPoint.repository.RoleRepository;
 import br.com.precopoint.PrecoPoint.repository.UsuarioRepository;
 import br.com.precopoint.PrecoPoint.service.FornecedorService;
 import br.com.precopoint.PrecoPoint.service.StatusService;
@@ -39,6 +40,8 @@ public class FornecedorServiceImpl implements FornecedorService {
     StatusService statusService;
     @Autowired
     AuthenticationController authenticationController;
+    @Autowired
+    RoleRepository roleRepository;
 
     @Override
     public ResponseEntity<StatusResponseDto> addFornecedor(FornecedorRequestDto fornecedor) {
@@ -50,7 +53,7 @@ public class FornecedorServiceImpl implements FornecedorService {
             usuarioRepository.findByEmail(fornecedor.getEmail()).ifPresent(fornecedorAux -> {
                 throw new AlreadyExistsException("E-mail '"+ fornecedor.getEmail() +"' já registrado no sistema.");
             });
-            usuarioRepository.save(fornecedor.toFornecedor());
+            usuarioRepository.save(fornecedor.toFornecedor(roleRepository));
             log.info("Fornecedor '"+ fornecedor.getEmail() +"' cadastrado com sucesso.");
             return ResponseEntity.status(HttpStatus.CREATED).body(statusService.usuarioStatusTrue());
         }catch(NotFoundException e){

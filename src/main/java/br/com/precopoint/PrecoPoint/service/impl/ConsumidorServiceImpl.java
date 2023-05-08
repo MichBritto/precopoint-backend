@@ -9,6 +9,7 @@ import br.com.precopoint.PrecoPoint.exception.AlreadyExistsException;
 import br.com.precopoint.PrecoPoint.exception.DefaultException;
 import br.com.precopoint.PrecoPoint.exception.NotFoundException;
 import br.com.precopoint.PrecoPoint.model.Usuario;
+import br.com.precopoint.PrecoPoint.repository.RoleRepository;
 import br.com.precopoint.PrecoPoint.repository.UsuarioRepository;
 import br.com.precopoint.PrecoPoint.service.ConsumidorService;
 import br.com.precopoint.PrecoPoint.service.StatusService;
@@ -33,6 +34,8 @@ public class ConsumidorServiceImpl implements ConsumidorService {
     StatusService cadastroStatusService;
     @Autowired
     AuthenticationController authenticationController;
+    @Autowired
+    RoleRepository roleRepository;
 
     @Override
     public ResponseEntity<StatusResponseDto> addConsumidor(ConsumidorRequestDto consumidor) {
@@ -41,7 +44,7 @@ public class ConsumidorServiceImpl implements ConsumidorService {
             usuarioRepository.findByEmail(consumidor.getEmail()).ifPresent(consumidorAux ->{
                 throw new AlreadyExistsException("E-mail '"+ consumidor.getEmail() +"' já registrado no sistema.");
             });
-            usuarioRepository.save(consumidor.toConsumidor());
+            usuarioRepository.save(consumidor.toConsumidor(roleRepository));
             log.info(cadastroStatusService.usuarioStatusTrue().getMensagem());
             return ResponseEntity.status(HttpStatus.CREATED).body(cadastroStatusService.usuarioStatusTrue());
         }catch(NotFoundException e){
