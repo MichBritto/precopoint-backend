@@ -1,4 +1,4 @@
-package br.com.precopoint.PrecoPoint.dto.usuario;
+package br.com.precopoint.PrecoPoint.dto.usuario.consumidor;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

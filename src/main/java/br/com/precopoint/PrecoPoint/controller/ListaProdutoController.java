@@ -25,7 +25,6 @@ public class ListaProdutoController {
 
     @PostMapping("criarlista")
     public ResponseEntity<StatusResponseDto> criarLsita(@Valid @RequestBody ListaDonoDto request){
-
         return listaService.criarLsita(request);
     }
 
@@ -38,6 +37,7 @@ public class ListaProdutoController {
     public ResponseEntity<List<?>> getListaConsumidor(@Valid @RequestBody ListasDeConsumidorRequestDto consumidor) throws Exception {
         return listaService.getListaConsumidor(consumidor);
     }
+
     @PostMapping("getprodutos-lista")
     public ResponseEntity<List<?>> getProdutosByLista(@Valid @RequestBody ListaRequestDto listaRequestDto) throws Exception {
         return listaService.getProdutosByLista(listaRequestDto);

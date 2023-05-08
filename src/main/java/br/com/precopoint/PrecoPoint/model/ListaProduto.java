@@ -1,18 +1,14 @@
 package br.com.precopoint.PrecoPoint.model;
 
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
 
 
 //@Table(name = "listaproduto")
 @Data
 @Entity
+@Table(name = "lista_produto")
 public class ListaProduto {
 
     @Id
@@ -26,8 +22,8 @@ public class ListaProduto {
 
 
     @ManyToOne
-    @JoinColumn(name = "lista_relacionada_id")
-    private Lista listaRelacionada;
+    @JoinColumn(name = "lista_id")
+    private Lista lista;
 
     private int qtde;
 

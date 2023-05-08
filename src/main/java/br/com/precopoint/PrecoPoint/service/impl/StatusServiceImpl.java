@@ -15,21 +15,12 @@ public class StatusServiceImpl implements StatusService {
         statusResponseDto.setStatus(true);
         return statusResponseDto;
     }
+
+
+
     @Override
     public StatusResponseDto produtoStatusTrue() {
         statusResponseDto.setMensagem("Produto adicionado com sucesso!");
-        statusResponseDto.setStatus(true);
-        return statusResponseDto;
-    }
-    @Override
-    public StatusResponseDto produtoRemovidoStatusTrue() {
-        statusResponseDto.setMensagem("Produto removido com sucesso.");
-        statusResponseDto.setStatus(true);
-        return statusResponseDto;
-    }
-    @Override
-    public StatusResponseDto produtoAtualizadoStatusTrue() {
-        statusResponseDto.setMensagem("Produto atulizado com sucesso.");
         statusResponseDto.setStatus(true);
         return statusResponseDto;
     }
