@@ -4,6 +4,7 @@ import br.com.precopoint.PrecoPoint.model.Usuario;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,9 @@ public class TokenService {
     @Value("${forum.jwt.secret}")
     private String secret;
 
+    @Autowired
+    GetRolesByUser getRolesByUser;
+
     public String gerarToken(Authentication authentication) {
         Usuario userLogado = (Usuario) authentication.getPrincipal();
         Date hoje = new Date();
@@ -27,6 +31,7 @@ public class TokenService {
                 .setSubject(userLogado.getEmail())
                 .setIssuedAt(hoje)
                 .setExpiration(dataExpiracao)
+                .claim("roles", getRolesByUser.rolesStringByUser(authentication.getName()))
                 .signWith(SignatureAlgorithm.HS512,secret)
                 .compact();
     }

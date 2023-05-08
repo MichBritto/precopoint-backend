@@ -1,7 +1,6 @@
-package br.com.precopoint.PrecoPoint.dto.usuario;
+package br.com.precopoint.PrecoPoint.dto.usuario.fornecedor;
 
-import br.com.precopoint.PrecoPoint.model.Fornecedor;
-import br.com.precopoint.PrecoPoint.model.TipoConta;
+import br.com.precopoint.PrecoPoint.model.Usuario;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -24,17 +23,16 @@ public class FornecedorRequestDto{
     private String cnpj;
     private String logotipo;
 
-    public Fornecedor toFornecedor(){
-        Fornecedor fornecedor = new Fornecedor();
+    public Usuario toFornecedor(){
+        Usuario fornecedor = new Usuario();
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         String senhaCrypt = passwordEncoder.encode(senha);
         fornecedor.setNome(nome);
-        fornecedor.setEndereco(endereco);
+        fornecedor.setCep(endereco);
         fornecedor.setEmail(email);
         fornecedor.setSenha(senhaCrypt);
         fornecedor.setCnpj(cnpj);
         fornecedor.setLogotipo(logotipo);
-        fornecedor.setTipoConta(TipoConta.FORNECEDOR);
         return fornecedor;
     }
 

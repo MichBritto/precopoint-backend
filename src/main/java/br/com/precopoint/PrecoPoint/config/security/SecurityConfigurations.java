@@ -1,7 +1,6 @@
 package br.com.precopoint.PrecoPoint.config.security;
 
-import br.com.precopoint.PrecoPoint.repository.ConsumidorRepository;
-import br.com.precopoint.PrecoPoint.repository.FornecedorRepository;
+import br.com.precopoint.PrecoPoint.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,18 +25,13 @@ public class SecurityConfigurations extends WebSecurityConfigurerAdapter {
     TokenService tokenService;
 
     @Autowired
-    FornecedorRepository fornecedorRepository;
-
-    @Autowired
-    ConsumidorRepository consumidorRepository;
+    UsuarioRepository usuarioRepository;
 
     @Override
     @Bean
     protected AuthenticationManager authenticationManager() throws Exception{
         return super.authenticationManager();
     }
-
-
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception{
@@ -49,13 +43,18 @@ public class SecurityConfigurations extends WebSecurityConfigurerAdapter {
         http.csrf()
                 .disable()
                 .authorizeRequests()
-                .antMatchers("/","/auth","/lista/getlista-consumidor","/lista/getprodutos-lista").permitAll()
+                .antMatchers("/auth","/filtro/**","/cadastro/**").permitAll()
+                .antMatchers("/consumidor/**").hasAnyRole("CONSUMIDOR","ADMINISTRADOR")
+                .antMatchers("/lista/**").hasAnyRole("CONSUMIDOR","ADMINISTRADOR")
+                .antMatchers("/fornecedor/**").hasAnyRole("FORNECEDOR","ADMINISTRADOR")
+                .antMatchers("/produto/**").hasAnyRole("FORNECEDOR","ADMINISTRADOR")
+                .antMatchers("/admin/**").hasRole("ADMNISTRADOR")
                 .anyRequest()
                 .authenticated()
                 .and().cors()
                 .and().csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .addFilterBefore(new AutenticacaoViaTokenFIlter(tokenService, consumidorRepository, fornecedorRepository), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new AutenticacaoViaTokenFIlter(tokenService, usuarioRepository), UsernamePasswordAuthenticationFilter.class);
     }
 }

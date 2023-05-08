@@ -2,10 +2,10 @@ package br.com.precopoint.PrecoPoint.dto.produto;
 
 import br.com.precopoint.PrecoPoint.exception.NotFoundException;
 import br.com.precopoint.PrecoPoint.model.Categoria;
-import br.com.precopoint.PrecoPoint.model.Fornecedor;
 import br.com.precopoint.PrecoPoint.model.Produto;
+import br.com.precopoint.PrecoPoint.model.Usuario;
 import br.com.precopoint.PrecoPoint.repository.CategoriaRepository;
-import br.com.precopoint.PrecoPoint.repository.FornecedorRepository;
+import br.com.precopoint.PrecoPoint.repository.UsuarioRepository;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -34,9 +34,9 @@ public class ProdutoRequestDto {
     @NotBlank
     private String categoria;
 
-    public Produto toProuduto(FornecedorRepository fornecedorRepository, CategoriaRepository categoriaRepository){
+    public Produto toProuduto(UsuarioRepository usuarioRepository, CategoriaRepository categoriaRepository){
         Produto produtoAux = new Produto();
-        Fornecedor fornecedorAux =  fornecedorRepository.findByNome(fornecedor).orElseThrow(
+        Usuario fornecedorAux =  usuarioRepository.findByNome(fornecedor).orElseThrow(
                 () -> new NotFoundException("Fornecedor '"+ fornecedor +"' não encontrado."));
         Categoria categoriaAux = categoriaRepository.findByCategoria(categoria).orElseThrow(
                 () ->  new NotFoundException("Categoria '"+ categoria +"' não encontrada."));

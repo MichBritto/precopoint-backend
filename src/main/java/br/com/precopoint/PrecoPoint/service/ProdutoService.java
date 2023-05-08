@@ -12,7 +12,7 @@ import java.util.List;
 public interface ProdutoService {
 
     ResponseEntity<StatusResponseDto> addProduto(ProdutoRequestDto request) throws Exception;
-    ResponseEntity<StatusResponseDto> deleteProduto(FindProdutoRequestDto request) throws Exception;
+    ResponseEntity<?> deleteProduto(int idProduto) throws Exception;
     ResponseEntity<?> updateProduto(int produtoId, UpdateProdutoRequestDto produtoDetails);
     ResponseEntity<List<ProdutoResponseDto>> getProduto();
     ResponseEntity<List<ProdutoResponseDto>> getProdutoAsc() throws Exception;

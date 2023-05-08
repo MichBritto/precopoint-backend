@@ -1,16 +1,15 @@
 package br.com.precopoint.PrecoPoint.service.impl;
 
 import br.com.precopoint.PrecoPoint.controller.AuthenticationController;
-import br.com.precopoint.PrecoPoint.dto.usuario.ConsumidorRequestDto;
-import br.com.precopoint.PrecoPoint.dto.usuario.ConsumidorResponseDto;
+import br.com.precopoint.PrecoPoint.dto.usuario.consumidor.ConsumidorRequestDto;
+import br.com.precopoint.PrecoPoint.dto.usuario.consumidor.ConsumidorResponseDto;
 import br.com.precopoint.PrecoPoint.dto.usuario.StatusResponseDto;
-import br.com.precopoint.PrecoPoint.dto.usuario.UpdateConsumidorRequestDto;
+import br.com.precopoint.PrecoPoint.dto.usuario.consumidor.UpdateConsumidorRequestDto;
 import br.com.precopoint.PrecoPoint.exception.AlreadyExistsException;
 import br.com.precopoint.PrecoPoint.exception.DefaultException;
 import br.com.precopoint.PrecoPoint.exception.NotFoundException;
-import br.com.precopoint.PrecoPoint.model.Consumidor;
-import br.com.precopoint.PrecoPoint.repository.ConsumidorRepository;
-import br.com.precopoint.PrecoPoint.repository.FornecedorRepository;
+import br.com.precopoint.PrecoPoint.model.Usuario;
+import br.com.precopoint.PrecoPoint.repository.UsuarioRepository;
 import br.com.precopoint.PrecoPoint.service.ConsumidorService;
 import br.com.precopoint.PrecoPoint.service.StatusService;
 import lombok.extern.slf4j.Slf4j;
@@ -22,18 +21,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 @Slf4j
 public class ConsumidorServiceImpl implements ConsumidorService {
     @Autowired
-    ConsumidorRepository consumidorRepository;
+    UsuarioRepository usuarioRepository;
     @Autowired
     StatusService cadastroStatusService;
-    @Autowired
-    FornecedorRepository fornecedorRepository;
-
     @Autowired
     AuthenticationController authenticationController;
 
@@ -41,13 +38,10 @@ public class ConsumidorServiceImpl implements ConsumidorService {
     public ResponseEntity<StatusResponseDto> addConsumidor(ConsumidorRequestDto consumidor) {
         ThreadContext.put("user",authenticationController.getUser());
         try {
-            consumidorRepository.findByEmail(consumidor.getEmail()).ifPresent(consumidorAux ->{
+            usuarioRepository.findByEmail(consumidor.getEmail()).ifPresent(consumidorAux ->{
                 throw new AlreadyExistsException("E-mail '"+ consumidor.getEmail() +"' já registrado no sistema.");
             });
-            fornecedorRepository.findByEmail(consumidor.getEmail()).ifPresent(fornecedor -> {
-                throw new AlreadyExistsException("E-mail '"+ consumidor.getEmail() +"' já registrado no sistema.");
-            });
-            consumidorRepository.save(consumidor.toConsumidor());
+            usuarioRepository.save(consumidor.toConsumidor());
             log.info(cadastroStatusService.usuarioStatusTrue().getMensagem());
             return ResponseEntity.status(HttpStatus.CREATED).body(cadastroStatusService.usuarioStatusTrue());
         }catch(NotFoundException e){
@@ -61,7 +55,7 @@ public class ConsumidorServiceImpl implements ConsumidorService {
     public ResponseEntity<?> getAllConsumidor() {
         try {
             ModelMapper modelMapper = new ModelMapper();
-            List<Consumidor> consumidorList = consumidorRepository.findAll();
+            List<Usuario> consumidorList = usuarioRepository.findAll();
             List<ConsumidorResponseDto> finalList = consumidorList.stream()
                     .map(consumidor -> modelMapper.map(consumidor, ConsumidorResponseDto.class)).toList();
             return ResponseEntity.ok(finalList);
@@ -74,10 +68,10 @@ public class ConsumidorServiceImpl implements ConsumidorService {
     @Override
     public ResponseEntity<?> updateConsumidor(int idConsumidor, UpdateConsumidorRequestDto updateConsumidorRequestDto) {
         try{
-            Consumidor consumidor = consumidorRepository.findById(idConsumidor).orElseThrow(
+            Usuario consumidor = usuarioRepository.findById(idConsumidor).orElseThrow(
                     () -> new NotFoundException("Erro: usuário com id '"+ idConsumidor +"' não encontrado."));
             if(updateConsumidorRequestDto.getEndereco() != null && !updateConsumidorRequestDto.getEndereco().trim().isEmpty() ){
-                consumidor.setEndereco(updateConsumidorRequestDto.getEndereco());
+                consumidor.setCep(updateConsumidorRequestDto.getEndereco());
             }
             if(updateConsumidorRequestDto.getNome() != null && !updateConsumidorRequestDto.getNome().trim().isEmpty()){
                 consumidor.setNome(updateConsumidorRequestDto.getNome());
@@ -87,8 +81,10 @@ public class ConsumidorServiceImpl implements ConsumidorService {
                 String senhaCrypt = passwordEncoder.encode(updateConsumidorRequestDto.getSenha());
                 consumidor.setSenha(senhaCrypt);
             }
-            consumidorRepository.save(consumidor);
-            return ResponseEntity.ok(consumidor);
+            consumidor.setAtualizadoEm(LocalDateTime.now());
+            usuarioRepository.save(consumidor);
+            ModelMapper modelMapper = new ModelMapper();
+            return ResponseEntity.ok(modelMapper.map(consumidor,ConsumidorResponseDto.class));
         }catch(NotFoundException e) {
             throw new NotFoundException(e.getMessage());
         }catch(Exception e) {
@@ -96,5 +92,20 @@ public class ConsumidorServiceImpl implements ConsumidorService {
         }
     }
 
+    @Override
+    public ResponseEntity<?> deleteConsumidor(int idConsumidor) {
+        ThreadContext.put("user", authenticationController.getUser());
+        try{
+            Usuario consumidor = usuarioRepository.findById(idConsumidor).orElseThrow(
+                    () -> new NotFoundException("Erro: usuário de id '"+ idConsumidor +"' não encontrado"));
+            usuarioRepository.delete(consumidor);
+            log.info("Consumidor '{}' removido com sucesso",consumidor.getEmail());
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        }catch(NotFoundException e){
+            throw new NotFoundException(e.getMessage());
+        }catch(Exception e){
+            throw new DefaultException("Erro ao remover produto: "+ e.getMessage());
+        }
+    }
 
 }

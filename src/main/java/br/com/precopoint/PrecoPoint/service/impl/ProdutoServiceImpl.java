@@ -1,20 +1,24 @@
 package br.com.precopoint.PrecoPoint.service.impl;
 
 import br.com.precopoint.PrecoPoint.controller.AuthenticationController;
-import br.com.precopoint.PrecoPoint.dto.produto.*;
+import br.com.precopoint.PrecoPoint.dto.produto.FindProdutoRequestDto;
+import br.com.precopoint.PrecoPoint.dto.produto.ProdutoRequestDto;
+import br.com.precopoint.PrecoPoint.dto.produto.ProdutoResponseDto;
+import br.com.precopoint.PrecoPoint.dto.produto.UpdateProdutoRequestDto;
 import br.com.precopoint.PrecoPoint.dto.usuario.StatusResponseDto;
 import br.com.precopoint.PrecoPoint.exception.DefaultException;
 import br.com.precopoint.PrecoPoint.exception.NotFoundException;
 import br.com.precopoint.PrecoPoint.model.Produto;
 import br.com.precopoint.PrecoPoint.repository.CategoriaRepository;
-import br.com.precopoint.PrecoPoint.repository.FornecedorRepository;
 import br.com.precopoint.PrecoPoint.repository.ProdutoRepository;
+import br.com.precopoint.PrecoPoint.repository.UsuarioRepository;
 import br.com.precopoint.PrecoPoint.service.ProdutoService;
 import br.com.precopoint.PrecoPoint.service.StatusService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.ThreadContext;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -27,13 +31,13 @@ public class ProdutoServiceImpl implements ProdutoService {
     ProdutoRepository produtoRepository;
 
     @Autowired
-    FornecedorRepository fornecedorRepository;
-
-    @Autowired
     StatusService statusService;
 
     @Autowired
     AuthenticationController authenticationController;
+
+    @Autowired
+    UsuarioRepository usuarioRepository;
 
     @Autowired
     CategoriaRepository categoriaRepository;
@@ -42,7 +46,7 @@ public class ProdutoServiceImpl implements ProdutoService {
     public ResponseEntity<StatusResponseDto> addProduto(ProdutoRequestDto request) throws Exception {
         ThreadContext.put("user", authenticationController.getUser());
         try{
-            produtoRepository.save(request.toProuduto(fornecedorRepository,categoriaRepository));
+            produtoRepository.save(request.toProuduto(usuarioRepository,categoriaRepository));
 
             log.info("Produto '{}' adicionado",request.getProduto());
             return ResponseEntity.ok(statusService.produtoStatusTrue());
@@ -52,14 +56,14 @@ public class ProdutoServiceImpl implements ProdutoService {
     }
 
     @Override
-    public ResponseEntity<StatusResponseDto> deleteProduto(FindProdutoRequestDto request) throws Exception {
+    public ResponseEntity<?> deleteProduto(int idProduto) throws Exception {
         ThreadContext.put("user", authenticationController.getUser());
         try{
-            Produto produto = produtoRepository.findById(Integer.parseInt(request.getProduto())).orElseThrow(
-                    () -> new NotFoundException("Erro: produto '"+ request.getProduto() +"' não encontrado"));
+            Produto produto = produtoRepository.findById(idProduto).orElseThrow(
+                    () -> new NotFoundException("Erro: produto de id '"+ idProduto +"' não encontrado"));
            produtoRepository.delete(produto);
-            log.info("Produto '{}' removido com sucesso",produto.getProduto());
-            return ResponseEntity.ok(statusService.produtoRemovidoStatusTrue());
+            log.info("Produto '{}' removido com sucesso.",produto.getProduto());
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }catch(NotFoundException e){
             throw new NotFoundException(e.getMessage());
         }catch(Exception e){
@@ -70,6 +74,7 @@ public class ProdutoServiceImpl implements ProdutoService {
     @Override
     public ResponseEntity<?> updateProduto(int produtoId, UpdateProdutoRequestDto produtoDetails){
         try{
+            ModelMapper modelMapper = new ModelMapper();
             Produto produto = produtoRepository.findById(produtoId)
                     .orElseThrow(() -> new NotFoundException("Produto não encontrado para este id: " + produtoId));
 
@@ -89,13 +94,14 @@ public class ProdutoServiceImpl implements ProdutoService {
                 categoriaRepository.findByCategoria(produtoDetails.getCategoria()).ifPresent(produto::setCategoria);
             }
             if(produtoDetails.getFornecedor() != null) {
-                fornecedorRepository.findByNome(produtoDetails.getFornecedor()).ifPresent(produto::setFornecedor);
+                usuarioRepository.findByNome(produtoDetails.getFornecedor()).ifPresent(produto::setFornecedor);
             }
             if(produtoDetails.getImagem() != null) {
                 produto.setImagem(produtoDetails.getImagem());
             }
             produtoRepository.save(produto);
-            return ResponseEntity.ok(statusService.produtoAtualizadoStatusTrue());
+            log.info("Produto de id '"+produto.getId()+"' atualizado com sucesso.");
+            return ResponseEntity.ok(modelMapper.map(produto,ProdutoResponseDto.class));
         }catch(NotFoundException e) {
             throw new DefaultException(e.getMessage());
         }catch(Exception e) {
@@ -140,7 +146,7 @@ public class ProdutoServiceImpl implements ProdutoService {
     public ResponseEntity<List<ProdutoResponseDto>> getProdutoByNomeAsc(FindProdutoRequestDto findProdutoRequestDto) throws Exception {
         try{
             ModelMapper modelMapper = new ModelMapper();
-            List<ProdutoResponseDto> list = produtoRepository.findAllByProdutoOrderByPrecoAsc(findProdutoRequestDto.getProduto()).stream()
+            List<ProdutoResponseDto> list = produtoRepository.findAllByProdutoContainingIgnoreCaseOrderByPrecoAsc(findProdutoRequestDto.getProduto()).stream()
                     .map(produto -> {
                         ProdutoResponseDto produtoResponseDto = modelMapper.map(produto, ProdutoResponseDto.class);
                         produtoResponseDto.setFornecedor(produto.getFornecedor().getNome());
@@ -159,7 +165,7 @@ public class ProdutoServiceImpl implements ProdutoService {
             List<ProdutoResponseDto> listResponse = null;
             ModelMapper modelMapper = new ModelMapper();
 
-            if(precoMin > precoMax){
+            if(precoMin != null && precoMax != null && precoMin > precoMax){
                 throw new DefaultException("'Preço Mínimo' deve ser maior que 'Preço Máximo'");
             }
             if((produto != null && !produto.isEmpty()) && precoMin != null  && precoMax != null){
@@ -205,7 +211,7 @@ public class ProdutoServiceImpl implements ProdutoService {
                         }).toList();
             }
             else if(produto != null && !produto.isEmpty()){
-                listResponse = produtoRepository.findByProdutoList(produto)
+                listResponse = produtoRepository.findAllByProdutoContainingIgnoreCaseOrderByPrecoAsc(produto)
                         .stream()
                         .map(produtoAux -> {
                             return modelMapper.map(produtoAux, ProdutoResponseDto.class);

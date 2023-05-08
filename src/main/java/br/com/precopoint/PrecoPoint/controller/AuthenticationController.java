@@ -34,16 +34,12 @@ public class AuthenticationController {
     @PostMapping
     public ResponseEntity<TokenDto> autenticar(@RequestBody @Valid LoginFormDto login) {
         this.user = login.getEmail();
-        UsernamePasswordAuthenticationToken dadosLogin = login.converter();
         try{
-            Authentication authentication = authManager.authenticate(dadosLogin);
-            String token = tokenService.gerarToken(authentication);
-            TokenDto response = new TokenDto();
-            response.setTipo("Bearer");
-            response.setToken(token);
+            Authentication authentication = authManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(login.getEmail(),login.getSenha()));
             ThreadContext.put("user",login.getEmail());
             log.info("Usuario logado com sucesso");
-            return ResponseEntity.ok(response);
+            return ResponseEntity.ok(new TokenDto(tokenService.gerarToken(authentication),"Bearer"));
         }catch(AuthenticationException e){
             throw new UnauthorizedException("Credenciais Invalidas");
         }

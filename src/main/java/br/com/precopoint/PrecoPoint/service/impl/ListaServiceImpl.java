@@ -6,10 +6,12 @@ import br.com.precopoint.PrecoPoint.dto.produto.ProdutoResponseDto;
 import br.com.precopoint.PrecoPoint.dto.usuario.StatusResponseDto;
 import br.com.precopoint.PrecoPoint.exception.DefaultException;
 import br.com.precopoint.PrecoPoint.exception.NotFoundException;
-import br.com.precopoint.PrecoPoint.model.Consumidor;
-import br.com.precopoint.PrecoPoint.model.Fornecedor;
 import br.com.precopoint.PrecoPoint.model.Produto;
-import br.com.precopoint.PrecoPoint.repository.*;
+import br.com.precopoint.PrecoPoint.model.Usuario;
+import br.com.precopoint.PrecoPoint.repository.ListaProdutoRepository;
+import br.com.precopoint.PrecoPoint.repository.ListaRepository;
+import br.com.precopoint.PrecoPoint.repository.ProdutoRepository;
+import br.com.precopoint.PrecoPoint.repository.UsuarioRepository;
 import br.com.precopoint.PrecoPoint.service.ListaService;
 import br.com.precopoint.PrecoPoint.service.StatusService;
 import lombok.extern.slf4j.Slf4j;
@@ -30,11 +32,9 @@ public class ListaServiceImpl implements ListaService {
     @Autowired
     ListaProdutoRepository listaProdutoRepository;
     @Autowired
-    ConsumidorRepository consumidorRepository;
+    UsuarioRepository usuarioRepository;
     @Autowired
     ProdutoRepository produtoRepository;
-    @Autowired
-    FornecedorRepository fornecedorRepository;
     @Autowired
     StatusService statusService;
     @Autowired
@@ -43,7 +43,7 @@ public class ListaServiceImpl implements ListaService {
     public ResponseEntity<StatusResponseDto> criarLsita(ListaDonoDto request) {
         ThreadContext.put("user", authenticationController.getUser());
         try{
-            listaRepository.save(request.toLista(consumidorRepository));
+            listaRepository.save(request.toLista(usuarioRepository));
             log.info(statusService.listaStatusTrue().getMensagem());
             return ResponseEntity.status(HttpStatus.CREATED).body(statusService.listaStatusTrue());
         }catch(NotFoundException e){
@@ -71,7 +71,7 @@ public class ListaServiceImpl implements ListaService {
     public ResponseEntity<List<?>> getListaConsumidor(ListasDeConsumidorRequestDto consumidor) {
         try{
             ModelMapper modelMapper = new ModelMapper();
-            Consumidor consumidorAux = consumidorRepository.findByEmail(consumidor.getEmail()).orElseThrow(
+            Usuario consumidorAux = usuarioRepository.findByEmail(consumidor.getEmail()).orElseThrow(
                     () -> new NotFoundException("Consumidor '"+ consumidor.getEmail() +"' não encontrado no sistema."));
             List<ListasDeConsumidorResponseDto> list = listaRepository.findAllByConsumidor(consumidorAux).stream()
                     .map(lista -> {
@@ -113,13 +113,15 @@ public class ListaServiceImpl implements ListaService {
             List<Object[]> produtosAndQtde = listaProdutoRepository.findAllByLista(listaRequestDto.toLista());
             ValorTotalResponseDto response = new ValorTotalResponseDto();
             Map<String, List<String>> produtosNaoEncontrados = new HashMap<>();
+            List<Usuario> fornecedores = usuarioRepository.findAll().stream()
+                    .filter(usuario -> usuario.getRoles().stream()
+                            .anyMatch(role -> role.getNome().equals("ROLE_FORNECEDOR"))).toList();
 
             for (Object[] result : produtosAndQtde) {
                 Produto produto = (Produto) result[0];
                 int qtde = (int) result[1];
-                List<Fornecedor> fornecedores = fornecedorRepository.findAll();
 
-                for (Fornecedor fornecedor : fornecedores) {
+                for (Usuario fornecedor : fornecedores) {
                     Optional<Produto> produtoFornecedor = produtoRepository.findProdutoByFornecedor(produto.getProduto(), produto.getMarcaProduto(), fornecedor);
                     String fornecedorName = fornecedor.getNome();
 
@@ -140,7 +142,7 @@ public class ListaServiceImpl implements ListaService {
                                     }
                                 }
                             },
-                            () -> produtosNaoEncontrados.computeIfAbsent(fornecedorName, k -> new ArrayList<>()).add(produto.getProduto())
+                            () -> produtosNaoEncontrados.computeIfAbsent(fornecedorName.toLowerCase(), k -> new ArrayList<>()).add(produto.getProduto()+ " - " +produto.getMarcaProduto())
                     );
                 }
             }

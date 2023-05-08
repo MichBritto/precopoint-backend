@@ -3,7 +3,6 @@ package br.com.precopoint.PrecoPoint.dto.login;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
 import javax.validation.constraints.NotBlank;
 
@@ -17,7 +16,4 @@ public class LoginFormDto {
     @NotBlank
     private String senha;
 
-    public UsernamePasswordAuthenticationToken converter() {
-        return new UsernamePasswordAuthenticationToken(email, senha);
-    }
 }
