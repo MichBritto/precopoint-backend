@@ -120,9 +120,9 @@ public class ListaServiceImpl implements ListaService {
                     () -> new NotFoundException("Lista de id '"+ idLista +"' não encontrada.")
             );
             List<Object[]> produtosAndQtde = listaProdutoRepository.findAllByLista(lista);
-            ValorTotalResponseDto response = new ValorTotalResponseDto();
             Map<String, List<String>> produtosNaoEncontrados = new HashMap<>();
-            Map<String, String> logotipoFornecedor = new HashMap<>();
+            Map<String, ListaValorTotalResponseDto> valorTotal = new HashMap<>();
+
             List<Usuario> fornecedores = usuarioRepository.findAll().stream()
                     .filter(usuario -> usuario.getRoles().stream()
                             .anyMatch(role -> role.getNome().equals("ROLE_FORNECEDOR"))).toList();
@@ -137,33 +137,22 @@ public class ListaServiceImpl implements ListaService {
 
                     produtoFornecedor.ifPresentOrElse(
                             produtoFornecedorAux -> {
-                                switch (fornecedorName.toLowerCase()) {
-                                    case "carrefour" ->
-                                            response.setCarrefour(response.getCarrefour() + (produtoFornecedor.get().getPreco() * qtde));
-                                    case "extra" ->
-                                            response.setExtra(response.getExtra() + (produtoFornecedor.get().getPreco() * qtde));
-                                    case "semar" ->
-                                            response.setSemar(response.getSemar() + (produtoFornecedor.get().getPreco() * qtde));
-                                    case "lourencini" ->
-                                            response.setLourencini(response.getLourencini() + (produtoFornecedor.get().getPreco() * qtde));
-                                    case "atacadao" ->
-                                            response.setAtacadao(response.getAtacadao() + (produtoFornecedor.get().getPreco() * qtde));
-                                    default -> {
-                                    }
-                                }
+                                ListaValorTotalResponseDto listaValorTotal = valorTotal.getOrDefault(fornecedorName.toLowerCase(), new ListaValorTotalResponseDto());
+                                listaValorTotal.setValorTotal(listaValorTotal.getValorTotal() + (produtoFornecedorAux.getPreco() * qtde));
+                                listaValorTotal.setLogotipo(fornecedor.getLogotipo());
+                                valorTotal.put(fornecedorName.toLowerCase(), listaValorTotal);
                             },
-                            () -> produtosNaoEncontrados.computeIfAbsent(fornecedorName.toLowerCase(), k -> new ArrayList<>()).add(produto.getProduto()+ " - " +produto.getMarcaProduto())
+                            () -> produtosNaoEncontrados.computeIfAbsent(fornecedorName.toLowerCase(), k -> new ArrayList<>()).add(produto.getProduto() + " - " + produto.getMarcaProduto())
                     );
-                    logotipoFornecedor.put(fornecedorName, fornecedor.getLogotipo());
                 }
             }
             Map<String, Object> result = new HashMap<>();
-            result.put("fornecedores", response);
+            result.put("fornecedores", valorTotal);
             result.put("produtos-nao-encontrados", produtosNaoEncontrados);
-            result.put("fornecedor-logotipo",logotipoFornecedor);
             return ResponseEntity.ok(result);
-        }catch (Exception e) {
-            throw new DefaultException("Erro ao pegar valor total de lista por fornecedor: "+e.getMessage());
+        } catch (Exception e) {
+            throw new DefaultException("Erro ao pegar valor total de lista por fornecedor: " + e.getMessage());
         }
     }
+
 }
