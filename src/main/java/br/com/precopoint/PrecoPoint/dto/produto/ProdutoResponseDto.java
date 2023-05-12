@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 public class ProdutoResponseDto {
     private int id;
     private String produto;
+    private int qtde;
     private double preco;
     private String imagem;
     private String descricao;

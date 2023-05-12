@@ -6,6 +6,7 @@ import br.com.precopoint.PrecoPoint.dto.produto.ProdutoResponseDto;
 import br.com.precopoint.PrecoPoint.dto.usuario.StatusResponseDto;
 import br.com.precopoint.PrecoPoint.exception.DefaultException;
 import br.com.precopoint.PrecoPoint.exception.NotFoundException;
+import br.com.precopoint.PrecoPoint.model.Lista;
 import br.com.precopoint.PrecoPoint.model.Produto;
 import br.com.precopoint.PrecoPoint.model.Usuario;
 import br.com.precopoint.PrecoPoint.repository.ListaProdutoRepository;
@@ -68,11 +69,11 @@ public class ListaServiceImpl implements ListaService {
     }
 
     @Override
-    public ResponseEntity<List<?>> getListaConsumidor(ListasDeConsumidorRequestDto consumidor) {
+    public ResponseEntity<List<?>> getListaConsumidor(String email) {
         try{
             ModelMapper modelMapper = new ModelMapper();
-            Usuario consumidorAux = usuarioRepository.findByEmail(consumidor.getEmail()).orElseThrow(
-                    () -> new NotFoundException("Consumidor '"+ consumidor.getEmail() +"' não encontrado no sistema."));
+            Usuario consumidorAux = usuarioRepository.findByEmail(email).orElseThrow(
+                    () -> new NotFoundException("Consumidor '"+ email +"' não encontrado no sistema."));
             List<ListasDeConsumidorResponseDto> list = listaRepository.findAllByConsumidor(consumidorAux).stream()
                     .map(lista -> {
                         ListasDeConsumidorResponseDto response = modelMapper.map(lista, ListasDeConsumidorResponseDto.class);
@@ -89,16 +90,21 @@ public class ListaServiceImpl implements ListaService {
     }
 
     @Override
-    public ResponseEntity<List<?>> getProdutosByLista(ListaRequestDto listaRequestDto) {
+    public ResponseEntity<List<?>> getProdutosByLista(int idLista) {
         try{
             ModelMapper modelMapper = new ModelMapper();
-            List<Object[]> listaAux = listaProdutoRepository.findAllByLista(listaRequestDto.toLista());
+            Lista lista = listaRepository.findById(idLista).orElseThrow(
+                    () -> new NotFoundException("Lista de id '"+ idLista +"' não encontrada.")
+            );
+            List<Object[]> listaAux = listaProdutoRepository.findAllByLista(lista);
             List<ProdutoResponseDto> list = listaAux.stream()
                     .map(objects -> {
                         Produto produto = (Produto) objects[0];
+                        int qtde = (int) objects[1] ;
                         ProdutoResponseDto produtoResponseDto = modelMapper.map(produto, ProdutoResponseDto.class);
                         produtoResponseDto.setFornecedor(produto.getFornecedor().getNome());
                         produtoResponseDto.setCategoria(produto.getCategoria().getCategoria());
+                        produtoResponseDto.setQtde(qtde);
                         return produtoResponseDto;
                     }).toList();
             return ResponseEntity.ok(list);
@@ -108,11 +114,15 @@ public class ListaServiceImpl implements ListaService {
     }
 
     @Override
-    public ResponseEntity<?> getValorLista(ListaRequestDto listaRequestDto) throws Exception {
+    public ResponseEntity<?> getValorLista(int idLista) throws Exception {
         try {
-            List<Object[]> produtosAndQtde = listaProdutoRepository.findAllByLista(listaRequestDto.toLista());
+            Lista lista = listaRepository.findById(idLista).orElseThrow(
+                    () -> new NotFoundException("Lista de id '"+ idLista +"' não encontrada.")
+            );
+            List<Object[]> produtosAndQtde = listaProdutoRepository.findAllByLista(lista);
             ValorTotalResponseDto response = new ValorTotalResponseDto();
             Map<String, List<String>> produtosNaoEncontrados = new HashMap<>();
+            Map<String, String> logotipoFornecedor = new HashMap<>();
             List<Usuario> fornecedores = usuarioRepository.findAll().stream()
                     .filter(usuario -> usuario.getRoles().stream()
                             .anyMatch(role -> role.getNome().equals("ROLE_FORNECEDOR"))).toList();
@@ -144,11 +154,13 @@ public class ListaServiceImpl implements ListaService {
                             },
                             () -> produtosNaoEncontrados.computeIfAbsent(fornecedorName.toLowerCase(), k -> new ArrayList<>()).add(produto.getProduto()+ " - " +produto.getMarcaProduto())
                     );
+                    logotipoFornecedor.put(fornecedorName, fornecedor.getLogotipo());
                 }
             }
             Map<String, Object> result = new HashMap<>();
             result.put("fornecedores", response);
             result.put("produtos-nao-encontrados", produtosNaoEncontrados);
+            result.put("fornecedor-logotipo",logotipoFornecedor);
             return ResponseEntity.ok(result);
         }catch (Exception e) {
             throw new DefaultException("Erro ao pegar valor total de lista por fornecedor: "+e.getMessage());

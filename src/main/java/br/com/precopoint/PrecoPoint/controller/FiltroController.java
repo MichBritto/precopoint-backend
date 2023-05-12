@@ -1,10 +1,13 @@
 package br.com.precopoint.PrecoPoint.controller;
 
+import br.com.precopoint.PrecoPoint.dto.filtro.CategoriaResponseDto;
 import br.com.precopoint.PrecoPoint.dto.filtro.FornecedorFilterByDistanceResponseDto;
 import br.com.precopoint.PrecoPoint.dto.produto.FindProdutoRequestDto;
 import br.com.precopoint.PrecoPoint.dto.produto.ProdutoResponseDto;
+import br.com.precopoint.PrecoPoint.repository.CategoriaRepository;
 import br.com.precopoint.PrecoPoint.service.FornecedorService;
 import br.com.precopoint.PrecoPoint.service.ProdutoService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +23,8 @@ public class FiltroController {
     @Autowired
     ProdutoService produtoService;
 
+    @Autowired
+    CategoriaRepository categoriaRepository;
     @GetMapping("localizacao")
     ResponseEntity<List<FornecedorFilterByDistanceResponseDto>> getFornecedoresMaisProximos(
             @RequestParam("cep") String cep) throws Exception {
@@ -46,5 +51,13 @@ public class FiltroController {
     @GetMapping("list-produto-nome")//retorna a lista dos produtos em ordem de preco de acordo com o nome do produto
     ResponseEntity<List<ProdutoResponseDto>> getProdutoByNomeAsc(@Valid @RequestBody FindProdutoRequestDto findProdutoRequestDto) throws Exception {
         return produtoService.getProdutoByNomeAsc(findProdutoRequestDto);
+    }
+
+    @GetMapping("get-categorias")
+    ResponseEntity<List<CategoriaResponseDto>> getCategorias(){
+        ModelMapper modelMapper = new ModelMapper();
+        List<CategoriaResponseDto> categoriaResponseDto = categoriaRepository.findAll().stream()
+                .map(categoria -> modelMapper.map(categoria, CategoriaResponseDto.class)).toList();
+        return ResponseEntity.ok(categoriaResponseDto);
     }
 }
