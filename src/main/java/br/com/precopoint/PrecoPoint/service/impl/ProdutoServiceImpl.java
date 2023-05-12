@@ -78,25 +78,25 @@ public class ProdutoServiceImpl implements ProdutoService {
             Produto produto = produtoRepository.findById(produtoId)
                     .orElseThrow(() -> new NotFoundException("Produto não encontrado para este id: " + produtoId));
 
-            if (produtoDetails.getProduto() != null) {
+            if (produtoDetails.getProduto() != null && !produtoDetails.getProduto().trim().isEmpty()) {
                 produto.setProduto(produtoDetails.getProduto());
             }
             if (produtoDetails.getPreco() != 0.0) {
                 produto.setPreco(produtoDetails.getPreco());
             }
-            if (produtoDetails.getDescricao() != null) {
+            if (produtoDetails.getDescricao() != null && !produtoDetails.getDescricao().trim().isEmpty()) {
                 produto.setDescricao(produtoDetails.getDescricao());
             }
-            if(produtoDetails.getMarcaProduto() != null) {
+            if(produtoDetails.getMarcaProduto() != null && !produtoDetails.getMarcaProduto().trim().isEmpty()) {
                 produto.setMarcaProduto(produtoDetails.getMarcaProduto());
             }
-            if(produtoDetails.getCategoria() != null) {
+            if(produtoDetails.getCategoria() != null && !produtoDetails.getCategoria().trim().isEmpty()) {
                 categoriaRepository.findByCategoria(produtoDetails.getCategoria()).ifPresent(produto::setCategoria);
             }
-            if(produtoDetails.getFornecedor() != null) {
+            if(produtoDetails.getFornecedor() != null && !produtoDetails.getFornecedor().trim().isEmpty()) {
                 usuarioRepository.findByNome(produtoDetails.getFornecedor()).ifPresent(produto::setFornecedor);
             }
-            if(produtoDetails.getImagem() != null) {
+            if(produtoDetails.getImagem() != null && !produtoDetails.getImagem().trim().isEmpty()) {
                 produto.setImagem(produtoDetails.getImagem());
             }
             produtoRepository.save(produto);
