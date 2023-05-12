@@ -3,16 +3,11 @@ package br.com.precopoint.PrecoPoint.controller;
 
 import br.com.precopoint.PrecoPoint.dto.lista.ListaDonoDto;
 import br.com.precopoint.PrecoPoint.dto.lista.ListaProdutoDto;
-import br.com.precopoint.PrecoPoint.dto.lista.ListaRequestDto;
-import br.com.precopoint.PrecoPoint.dto.lista.ListasDeConsumidorRequestDto;
 import br.com.precopoint.PrecoPoint.dto.usuario.StatusResponseDto;
 import br.com.precopoint.PrecoPoint.service.ListaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -33,18 +28,18 @@ public class ListaProdutoController {
         return listaService.addProduto(request);
     }
 
-    @PostMapping("getlista-consumidor")
-    public ResponseEntity<List<?>> getListaConsumidor(@Valid @RequestBody ListasDeConsumidorRequestDto consumidor) throws Exception {
-        return listaService.getListaConsumidor(consumidor);
+    @GetMapping("getlista-consumidor/{email}")
+    public ResponseEntity<List<?>> getListaConsumidor(@PathVariable("email") String email) throws Exception {
+        return listaService.getListaConsumidor(email);
     }
 
-    @PostMapping("getprodutos-lista")
-    public ResponseEntity<List<?>> getProdutosByLista(@Valid @RequestBody ListaRequestDto listaRequestDto) throws Exception {
-        return listaService.getProdutosByLista(listaRequestDto);
+    @GetMapping("getprodutos-lista/{idLista}")
+    public ResponseEntity<List<?>> getProdutosByLista(@PathVariable("idLista") int idLista) throws Exception {
+        return listaService.getProdutosByLista(idLista);
     }
 
-    @PostMapping("getvalortotal")
-    public ResponseEntity<?> getValorLista(@Valid @RequestBody ListaRequestDto listaRequestDto) throws Exception {
-        return listaService.getValorLista(listaRequestDto);
+    @GetMapping("getvalortotal/{idLista}")
+    public ResponseEntity<?> getValorLista(@PathVariable("idLista") int idLista) throws Exception {
+        return listaService.getValorLista(idLista);
     }
 }
