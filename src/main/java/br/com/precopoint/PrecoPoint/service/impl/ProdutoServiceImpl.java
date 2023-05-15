@@ -168,53 +168,74 @@ public class ProdutoServiceImpl implements ProdutoService {
             if(precoMin != null && precoMax != null && precoMin > precoMax){
                 throw new DefaultException("'Preço Mínimo' deve ser maior que 'Preço Máximo'");
             }
-            if((produto != null && !produto.isEmpty()) && precoMin != null  && precoMax != null){
+            if((produto != null && !produto.isEmpty()) && precoMin != null && !precoMin.toString().isEmpty() && precoMax != null && !precoMax.toString().isEmpty()){
                 listResponse = produtoRepository.findByProdutoAndPrecoBetween(produto,precoMin,precoMax)
                         .stream()
                         .map(produtoAux -> {
-                            return modelMapper.map(produtoAux, ProdutoResponseDto.class);
+                            ProdutoResponseDto produtoResponseDto = modelMapper.map(produtoAux, ProdutoResponseDto.class);
+                            produtoResponseDto.setFornecedor(produtoAux.getFornecedor().getNome());
+                            produtoResponseDto.setCategoria(produtoAux.getCategoria().getCategoria());
+                            return produtoResponseDto;
                         }).toList();
             }
-            else if(precoMin != null  && precoMax != null){
+            else if(precoMin != null && !precoMin.toString().isEmpty() && precoMax != null && !precoMax.toString().isEmpty()){
                 listResponse = produtoRepository.findByPrecoBetween(precoMin, precoMax)
                         .stream()
                         .map(produtoAux -> {
-                            return modelMapper.map(produtoAux, ProdutoResponseDto.class);
+                            ProdutoResponseDto produtoResponseDto = modelMapper.map(produtoAux, ProdutoResponseDto.class);
+                            produtoResponseDto.setFornecedor(produtoAux.getFornecedor().getNome());
+                            produtoResponseDto.setCategoria(produtoAux.getCategoria().getCategoria());
+                            return produtoResponseDto;
                         }).toList();
             }
-            else if((produto != null && !produto.isEmpty()) && precoMin != null){
+            else if((produto != null && !produto.isEmpty()) && precoMin != null && !precoMin.toString().isEmpty()){
                 listResponse = produtoRepository.findByProdutoAndPrecoMin(produto,precoMin)
                         .stream()
                         .map(produtoAux -> {
-                            return modelMapper.map(produtoAux, ProdutoResponseDto.class);
+                            ProdutoResponseDto produtoResponseDto = modelMapper.map(produtoAux, ProdutoResponseDto.class);
+                            produtoResponseDto.setFornecedor(produtoAux.getFornecedor().getNome());
+                            produtoResponseDto.setCategoria(produtoAux.getCategoria().getCategoria());
+                            return produtoResponseDto;
                         }).toList();
             }
-            else if((produto != null && !produto.isEmpty()) && precoMax != null){
+            else if((produto != null && !produto.isEmpty()) && precoMax != null && !precoMax.toString().isEmpty()){
                 listResponse = produtoRepository.findByProdutoAndPrecoMax(produto,precoMax)
                         .stream()
                         .map(produtoAux -> {
-                            return modelMapper.map(produtoAux, ProdutoResponseDto.class);
+                            ProdutoResponseDto produtoResponseDto = modelMapper.map(produtoAux, ProdutoResponseDto.class);
+                            produtoResponseDto.setFornecedor(produtoAux.getFornecedor().getNome());
+                            produtoResponseDto.setCategoria(produtoAux.getCategoria().getCategoria());
+                            return produtoResponseDto;
                         }).toList();
             }
-            else if(precoMin != null){
+            else if(precoMin != null && !precoMin.toString().isEmpty()){
                 listResponse = produtoRepository.findByPrecoMin(precoMin)
                         .stream()
                         .map(produtoAux -> {
-                            return modelMapper.map(produtoAux, ProdutoResponseDto.class);
+                            ProdutoResponseDto produtoResponseDto = modelMapper.map(produtoAux, ProdutoResponseDto.class);
+                            produtoResponseDto.setFornecedor(produtoAux.getFornecedor().getNome());
+                            produtoResponseDto.setCategoria(produtoAux.getCategoria().getCategoria());
+                            return produtoResponseDto;
                         }).toList();
             }
-            else if(precoMax != null){
+            else if(precoMax != null && !precoMax.toString().isEmpty()){
                 listResponse = produtoRepository.findByPrecoMax(precoMax)
                         .stream()
                         .map(produtoAux -> {
-                            return modelMapper.map(produtoAux, ProdutoResponseDto.class);
+                            ProdutoResponseDto produtoResponseDto = modelMapper.map(produtoAux, ProdutoResponseDto.class);
+                            produtoResponseDto.setFornecedor(produtoAux.getFornecedor().getNome());
+                            produtoResponseDto.setCategoria(produtoAux.getCategoria().getCategoria());
+                            return produtoResponseDto;
                         }).toList();
             }
             else if(produto != null && !produto.isEmpty()){
                 listResponse = produtoRepository.findAllByProdutoContainingIgnoreCaseOrderByPrecoAsc(produto)
                         .stream()
                         .map(produtoAux -> {
-                            return modelMapper.map(produtoAux, ProdutoResponseDto.class);
+                            ProdutoResponseDto produtoResponseDto = modelMapper.map(produtoAux, ProdutoResponseDto.class);
+                            produtoResponseDto.setFornecedor(produtoAux.getFornecedor().getNome());
+                            produtoResponseDto.setCategoria(produtoAux.getCategoria().getCategoria());
+                            return produtoResponseDto;
                         }).toList();
             }
             else{
