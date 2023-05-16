@@ -135,7 +135,12 @@ public class ProdutoServiceImpl implements ProdutoService {
             );
             List<ProdutoResponseDto> lista = produtoRepository.findByCategoria(categoria)
                     .stream()
-                    .map(produto -> modelMapper.map(produto,ProdutoResponseDto.class)).toList();
+                    .map(produto -> {
+                        var produtoResponseDto= modelMapper.map(produto,ProdutoResponseDto.class);
+                        produtoResponseDto.setCategoria(produto.getCategoria().getCategoria());
+                        produtoResponseDto.setFornecedor(produto.getFornecedor().getNome());
+                        return produtoResponseDto;
+                    }).toList();
             return ResponseEntity.ok(lista);
         } catch (NotFoundException e){
             throw new NotFoundException(e.getMessage());
