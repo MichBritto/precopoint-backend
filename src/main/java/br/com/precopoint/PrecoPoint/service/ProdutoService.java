@@ -15,6 +15,7 @@ public interface ProdutoService {
     ResponseEntity<?> deleteProduto(int idProduto) throws Exception;
     ResponseEntity<?> updateProduto(int produtoId, UpdateProdutoRequestDto produtoDetails);
     ResponseEntity<List<ProdutoResponseDto>> getProduto();
+    ResponseEntity<List<ProdutoResponseDto>> getProdutoByCategoria(int idCategoria);
     ResponseEntity<List<ProdutoResponseDto>> getProdutoAsc() throws Exception;
     ResponseEntity<List<ProdutoResponseDto>> getProdutoByNomeAsc(FindProdutoRequestDto findProdutoRequestDto) throws Exception;
     ResponseEntity<List<ProdutoResponseDto>> filterProdutos(String produto, Double precoMin, Double precoMax);

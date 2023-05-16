@@ -8,6 +8,7 @@ import br.com.precopoint.PrecoPoint.dto.produto.UpdateProdutoRequestDto;
 import br.com.precopoint.PrecoPoint.dto.usuario.StatusResponseDto;
 import br.com.precopoint.PrecoPoint.exception.DefaultException;
 import br.com.precopoint.PrecoPoint.exception.NotFoundException;
+import br.com.precopoint.PrecoPoint.model.Categoria;
 import br.com.precopoint.PrecoPoint.model.Produto;
 import br.com.precopoint.PrecoPoint.repository.CategoriaRepository;
 import br.com.precopoint.PrecoPoint.repository.ProdutoRepository;
@@ -122,6 +123,24 @@ public class ProdutoServiceImpl implements ProdutoService {
             return ResponseEntity.ok(list);
         }catch (Exception e){
             throw new DefaultException("Erro ao pegar produtos: "+ e.getMessage());
+        }
+    }
+
+    @Override
+    public ResponseEntity<List<ProdutoResponseDto>> getProdutoByCategoria(int idCategoria) {
+        try{
+            ModelMapper modelMapper = new ModelMapper();
+            Categoria categoria = categoriaRepository.findById(idCategoria).orElseThrow(
+                    () -> new NotFoundException("Categoria com id '"+ idCategoria +"' não foi encontrada.")
+            );
+            List<ProdutoResponseDto> lista = produtoRepository.findByCategoria(categoria)
+                    .stream()
+                    .map(produto -> modelMapper.map(produto,ProdutoResponseDto.class)).toList();
+            return ResponseEntity.ok(lista);
+        } catch (NotFoundException e){
+            throw new NotFoundException(e.getMessage());
+        } catch (Exception e) {
+            throw new DefaultException("Erro ao listar produtos por categoria: "+ e.getMessage());
         }
     }
 
