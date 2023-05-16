@@ -60,4 +60,9 @@ public class FiltroController {
                 .map(categoria -> modelMapper.map(categoria, CategoriaResponseDto.class)).toList();
         return ResponseEntity.ok(categoriaResponseDto);
     }
+
+    @GetMapping("list-produtos-by-categoria/{id}")
+    ResponseEntity<List<ProdutoResponseDto>> getProdutosByCategoria(@PathVariable("id") int idCategoria){
+        return produtoService.getProdutoByCategoria(idCategoria);
+    }
 }
