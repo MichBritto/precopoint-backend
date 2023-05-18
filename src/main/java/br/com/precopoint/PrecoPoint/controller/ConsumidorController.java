@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("consumidor")
 public class ConsumidorController {
@@ -14,9 +16,9 @@ public class ConsumidorController {
     ConsumidorService consumidorService;
 
     @Transactional
-    @PutMapping("update/{id}")
-    public ResponseEntity<?> updateConsumidor(@PathVariable(name = "id") int idConsumidor, @RequestBody UpdateConsumidorRequestDto updateConsumidorRequestDto){
-        return consumidorService.updateConsumidor(idConsumidor, updateConsumidorRequestDto);
+    @PutMapping("update")
+    public ResponseEntity<?> updateConsumidor(@Valid @RequestBody UpdateConsumidorRequestDto updateConsumidorRequestDto){
+        return consumidorService.updateConsumidor(updateConsumidorRequestDto);
     }
 
     @Transactional

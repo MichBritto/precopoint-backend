@@ -69,10 +69,11 @@ public class ConsumidorServiceImpl implements ConsumidorService {
     }
 
     @Override
-    public ResponseEntity<?> updateConsumidor(int idConsumidor, UpdateConsumidorRequestDto updateConsumidorRequestDto) {
+    public ResponseEntity<?> updateConsumidor(UpdateConsumidorRequestDto updateConsumidorRequestDto) {
+        ThreadContext.put("user", authenticationController.getUser());
         try{
-            Usuario consumidor = usuarioRepository.findById(idConsumidor).orElseThrow(
-                    () -> new NotFoundException("Erro: usuário com id '"+ idConsumidor +"' não encontrado."));
+            Usuario consumidor = usuarioRepository.findByEmail(updateConsumidorRequestDto.getEmail()).orElseThrow(
+                    () -> new NotFoundException("Erro: usuário com email '"+ updateConsumidorRequestDto.getEmail() +"' não encontrado."));
             if(updateConsumidorRequestDto.getEndereco() != null && !updateConsumidorRequestDto.getEndereco().trim().isEmpty() ){
                 consumidor.setCep(updateConsumidorRequestDto.getEndereco());
             }
@@ -87,6 +88,7 @@ public class ConsumidorServiceImpl implements ConsumidorService {
             consumidor.setAtualizadoEm(LocalDateTime.now());
             usuarioRepository.save(consumidor);
             ModelMapper modelMapper = new ModelMapper();
+            log.info("Dados de usuário '"+ updateConsumidorRequestDto.getEmail() +"' atualizados com sucesso.");
             return ResponseEntity.ok(modelMapper.map(consumidor,ConsumidorResponseDto.class));
         }catch(NotFoundException e) {
             throw new NotFoundException(e.getMessage());

@@ -7,9 +7,8 @@ import org.springframework.http.ResponseEntity;
 
 
 public interface ConsumidorService {
-
     ResponseEntity<StatusResponseDto> addConsumidor(ConsumidorRequestDto consumidor);
     ResponseEntity<?> deleteConsumidor(int idConsumidor);
     ResponseEntity<?> getAllConsumidor();
-    ResponseEntity<?> updateConsumidor(int idConsumidor, UpdateConsumidorRequestDto updateConsumidorRequestDto);
+    ResponseEntity<?> updateConsumidor(UpdateConsumidorRequestDto updateConsumidorRequestDto);
 }
