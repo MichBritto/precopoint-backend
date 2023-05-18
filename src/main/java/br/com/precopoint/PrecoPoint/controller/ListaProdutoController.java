@@ -1,7 +1,7 @@
 package br.com.precopoint.PrecoPoint.controller;
 
 
-import br.com.precopoint.PrecoPoint.dto.lista.ListaDonoDto;
+import br.com.precopoint.PrecoPoint.dto.lista.CriarListaRequestDto;
 import br.com.precopoint.PrecoPoint.dto.lista.ListaProdutoDto;
 import br.com.precopoint.PrecoPoint.dto.usuario.StatusResponseDto;
 import br.com.precopoint.PrecoPoint.service.ListaService;
@@ -19,7 +19,7 @@ public class ListaProdutoController {
     ListaService listaService;
 
     @PostMapping("criarlista")
-    public ResponseEntity<StatusResponseDto> criarLsita(@Valid @RequestBody ListaDonoDto request){
+    public ResponseEntity<StatusResponseDto> criarLsita(@Valid @RequestBody CriarListaRequestDto request){
         return listaService.criarLsita(request);
     }
 

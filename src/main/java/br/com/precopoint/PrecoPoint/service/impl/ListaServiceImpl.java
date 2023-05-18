@@ -4,6 +4,7 @@ import br.com.precopoint.PrecoPoint.controller.AuthenticationController;
 import br.com.precopoint.PrecoPoint.dto.lista.*;
 import br.com.precopoint.PrecoPoint.dto.produto.ProdutoResponseDto;
 import br.com.precopoint.PrecoPoint.dto.usuario.StatusResponseDto;
+import br.com.precopoint.PrecoPoint.exception.AlreadyExistsException;
 import br.com.precopoint.PrecoPoint.exception.DefaultException;
 import br.com.precopoint.PrecoPoint.exception.NotFoundException;
 import br.com.precopoint.PrecoPoint.model.Lista;
@@ -41,14 +42,23 @@ public class ListaServiceImpl implements ListaService {
     @Autowired
     AuthenticationController authenticationController;
     @Override
-    public ResponseEntity<StatusResponseDto> criarLsita(ListaDonoDto request) {
+    public ResponseEntity<StatusResponseDto> criarLsita(CriarListaRequestDto request) {
         ThreadContext.put("user", authenticationController.getUser());
         try{
-            listaRepository.save(request.toLista(usuarioRepository));
+            Usuario consumidor = usuarioRepository.findByEmail(request.getEmailConsumidor()).orElseThrow(
+                    () -> new NotFoundException("Usuário '"+ request.getEmailConsumidor() + "' não encontrado."));
+            listaRepository.findByNomeAndConsumidor(request.getNomeLista(),consumidor).ifPresent(
+                    (lista) -> {
+                        throw new AlreadyExistsException("Outra lista já foi cadastrada com este mesmo nome pelo usuário '"+
+                                                            request.getEmailConsumidor() +"'");
+                    });
+            listaRepository.save(new Lista(request.getNomeLista(), consumidor));
             log.info(statusService.listaStatusTrue().getMensagem());
             return ResponseEntity.status(HttpStatus.CREATED).body(statusService.listaStatusTrue());
+        }catch(AlreadyExistsException e){
+            throw new NotFoundException("Erro ao criar lista: "+ e.getMessage());
         }catch(NotFoundException e){
-            throw new NotFoundException(e.getMessage());
+            throw new NotFoundException("Erro ao criar lista: "+ e.getMessage());
         }catch(Exception e){
             throw new DefaultException("Erro ao criar lista: "+ e.getMessage());
         }
