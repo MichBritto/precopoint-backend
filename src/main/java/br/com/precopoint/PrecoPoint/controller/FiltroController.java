@@ -2,6 +2,7 @@ package br.com.precopoint.PrecoPoint.controller;
 
 import br.com.precopoint.PrecoPoint.dto.filtro.CategoriaResponseDto;
 import br.com.precopoint.PrecoPoint.dto.filtro.FornecedorFilterByDistanceResponseDto;
+import br.com.precopoint.PrecoPoint.dto.produto.DistinctProdutoResponseDto;
 import br.com.precopoint.PrecoPoint.dto.produto.FindProdutoRequestDto;
 import br.com.precopoint.PrecoPoint.dto.produto.ProdutoResponseDto;
 import br.com.precopoint.PrecoPoint.repository.CategoriaRepository;
@@ -42,6 +43,9 @@ public class FiltroController {
     ResponseEntity<List<ProdutoResponseDto>> getProduto(){
         return produtoService.getProduto();
     }
+
+    @GetMapping("list-distinct-produto")//retorna apenas um produto com base em 'produto,descricao,marca_produto'
+    ResponseEntity<List<DistinctProdutoResponseDto>>  getDistinctProduto() { return produtoService.getDistinctProduto(); }
 
     @GetMapping("list-produto-asc") //retorna os produtos do menor preço para o maior
     ResponseEntity<List<ProdutoResponseDto>> getProdutoAsc() throws Exception {
