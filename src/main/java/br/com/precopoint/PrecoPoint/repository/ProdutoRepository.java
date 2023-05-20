@@ -33,4 +33,7 @@ public interface ProdutoRepository extends JpaRepository<Produto, Integer> {
     @Query("SELECT p FROM Produto p WHERE p.produto LIKE %:produto% AND p.preco >= :precoMin AND p.preco <= :precoMax")
     List<Produto> findByProdutoAndPrecoBetween(@Param("produto") String nome, @Param("precoMin") double precoMin, @Param("precoMax") double precoMax);
     List<Produto> findByCategoria(Categoria categoria);
+    @Query("SELECT MIN(p) FROM Produto p GROUP BY p.produto, p.descricao, p.marcaProduto")
+    List<Produto> findDistinctProdutoDescricaoMarca();
+
 }

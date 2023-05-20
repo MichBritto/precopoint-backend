@@ -1,10 +1,7 @@
 package br.com.precopoint.PrecoPoint.service.impl;
 
 import br.com.precopoint.PrecoPoint.controller.AuthenticationController;
-import br.com.precopoint.PrecoPoint.dto.produto.FindProdutoRequestDto;
-import br.com.precopoint.PrecoPoint.dto.produto.ProdutoRequestDto;
-import br.com.precopoint.PrecoPoint.dto.produto.ProdutoResponseDto;
-import br.com.precopoint.PrecoPoint.dto.produto.UpdateProdutoRequestDto;
+import br.com.precopoint.PrecoPoint.dto.produto.*;
 import br.com.precopoint.PrecoPoint.dto.usuario.StatusResponseDto;
 import br.com.precopoint.PrecoPoint.exception.DefaultException;
 import br.com.precopoint.PrecoPoint.exception.NotFoundException;
@@ -124,6 +121,18 @@ public class ProdutoServiceImpl implements ProdutoService {
         }catch (Exception e){
             throw new DefaultException("Erro ao pegar produtos: "+ e.getMessage());
         }
+    }
+
+    @Override
+    public ResponseEntity<List<DistinctProdutoResponseDto>> getDistinctProduto() {
+        ModelMapper modelMapper = new ModelMapper();
+        List<DistinctProdutoResponseDto> list = produtoRepository.findDistinctProdutoDescricaoMarca().stream()
+                .map(produto -> {
+                    DistinctProdutoResponseDto produtoResponseDto = modelMapper.map(produto, DistinctProdutoResponseDto.class);
+                    produtoResponseDto.setCategoria(produto.getCategoria().getCategoria());
+                    return produtoResponseDto;
+                }).toList();
+        return ResponseEntity.ok(list);
     }
 
     @Override
