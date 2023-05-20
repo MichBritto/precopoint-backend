@@ -13,7 +13,7 @@ public interface ProdutoService {
     ResponseEntity<?> updateProduto(int produtoId, UpdateProdutoRequestDto produtoDetails);
     ResponseEntity<List<ProdutoResponseDto>> getProduto();
     ResponseEntity<List<DistinctProdutoResponseDto>> getDistinctProduto();
-    ResponseEntity<List<ProdutoResponseDto>> getProdutoByCategoria(int idCategoria);
+    ResponseEntity<List<DistinctProdutoResponseDto>> getProdutoByCategoria(int idCategoria);
     ResponseEntity<List<ProdutoResponseDto>> getProdutoAsc() throws Exception;
     ResponseEntity<List<ProdutoResponseDto>> getProdutoByNomeAsc(FindProdutoRequestDto findProdutoRequestDto) throws Exception;
     ResponseEntity<List<ProdutoResponseDto>> filterProdutos(String produto, Double precoMin, Double precoMax);
