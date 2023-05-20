@@ -36,4 +36,6 @@ public interface ProdutoRepository extends JpaRepository<Produto, Integer> {
     @Query("SELECT MIN(p) FROM Produto p GROUP BY p.produto, p.descricao, p.marcaProduto")
     List<Produto> findDistinctProdutoDescricaoMarca();
 
+    @Query("SELECT p FROM Produto p WHERE p.id IN (SELECT MIN(p2.id) FROM Produto p2 WHERE p2.categoria = :categoria GROUP BY p2.produto, p2.descricao, p2.marcaProduto)")
+    List<Produto> findByCategoriaDistinct(Categoria categoria);
 }

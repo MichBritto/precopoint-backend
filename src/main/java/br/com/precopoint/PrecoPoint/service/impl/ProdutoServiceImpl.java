@@ -136,18 +136,17 @@ public class ProdutoServiceImpl implements ProdutoService {
     }
 
     @Override
-    public ResponseEntity<List<ProdutoResponseDto>> getProdutoByCategoria(int idCategoria) {
+    public ResponseEntity<List<DistinctProdutoResponseDto>> getProdutoByCategoria(int idCategoria) {
         try{
             ModelMapper modelMapper = new ModelMapper();
             Categoria categoria = categoriaRepository.findById(idCategoria).orElseThrow(
                     () -> new NotFoundException("Categoria com id '"+ idCategoria +"' não foi encontrada.")
             );
-            List<ProdutoResponseDto> lista = produtoRepository.findByCategoria(categoria)
+            List<DistinctProdutoResponseDto> lista = produtoRepository.findByCategoriaDistinct(categoria)
                     .stream()
                     .map(produto -> {
-                        var produtoResponseDto= modelMapper.map(produto,ProdutoResponseDto.class);
+                        var produtoResponseDto= modelMapper.map(produto,DistinctProdutoResponseDto.class);
                         produtoResponseDto.setCategoria(produto.getCategoria().getCategoria());
-                        produtoResponseDto.setFornecedor(produto.getFornecedor().getNome());
                         return produtoResponseDto;
                     }).toList();
             return ResponseEntity.ok(lista);

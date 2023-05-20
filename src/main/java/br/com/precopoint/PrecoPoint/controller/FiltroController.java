@@ -66,7 +66,7 @@ public class FiltroController {
     }
 
     @GetMapping("list-produtos-by-categoria/{id}")
-    ResponseEntity<List<ProdutoResponseDto>> getProdutosByCategoria(@PathVariable("id") int idCategoria){
+    ResponseEntity<List<DistinctProdutoResponseDto>> getProdutosByCategoria(@PathVariable("id") int idCategoria){
         return produtoService.getProdutoByCategoria(idCategoria);
     }
 }
