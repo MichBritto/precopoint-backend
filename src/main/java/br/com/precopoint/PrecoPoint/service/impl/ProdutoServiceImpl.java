@@ -262,7 +262,7 @@ public class ProdutoServiceImpl implements ProdutoService {
                         }).toList();
             }
             else if(produto != null && !produto.isEmpty()){
-                listResponse = produtoRepository.findAllByProdutoContainingIgnoreCaseOrderByPrecoAsc(produto)
+                listResponse = produtoRepository.findByProduto(produto)
                         .stream()
                         .map(produtoAux -> {
                             ProdutoResponseDto produtoResponseDto = modelMapper.map(produtoAux, ProdutoResponseDto.class);
