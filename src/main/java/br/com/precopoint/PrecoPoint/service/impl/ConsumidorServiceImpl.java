@@ -101,6 +101,21 @@ public class ConsumidorServiceImpl implements ConsumidorService {
     }
 
     @Override
+    public ResponseEntity<ConsumidorResponseDto> getConsumidor(String email) {
+        try {
+            ModelMapper modelMapper = new ModelMapper();
+            Usuario consumidor = usuarioRepository.findByEmail(email).orElseThrow(
+                    () -> new NotFoundException("Erro: usuário com email '"+ email +"' não encontrado."));
+            ConsumidorResponseDto response = modelMapper.map(consumidor, ConsumidorResponseDto.class);
+            return ResponseEntity.ok(response);
+        }catch(NotFoundException e){
+            throw new NotFoundException(e.getMessage());
+        }catch(Exception e){
+            throw new DefaultException("Erro ao pegar usuário '"+ email +"': "+ e.getMessage());
+        }
+    }
+
+    @Override
     public ResponseEntity<?> deleteConsumidor(int idConsumidor) {
         ThreadContext.put("user", authenticationController.getUser());
         try{
