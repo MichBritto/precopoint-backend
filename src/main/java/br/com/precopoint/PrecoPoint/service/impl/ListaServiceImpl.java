@@ -8,6 +8,7 @@ import br.com.precopoint.PrecoPoint.exception.AlreadyExistsException;
 import br.com.precopoint.PrecoPoint.exception.DefaultException;
 import br.com.precopoint.PrecoPoint.exception.NotFoundException;
 import br.com.precopoint.PrecoPoint.model.Lista;
+import br.com.precopoint.PrecoPoint.model.ListaProduto;
 import br.com.precopoint.PrecoPoint.model.Produto;
 import br.com.precopoint.PrecoPoint.model.Usuario;
 import br.com.precopoint.PrecoPoint.repository.ListaProdutoRepository;
@@ -68,7 +69,26 @@ public class ListaServiceImpl implements ListaService {
     public ResponseEntity<StatusResponseDto> addProduto(ListaProdutoDto request) {
         ThreadContext.put("user", authenticationController.getUser());
         try{
-            listaProdutoRepository.save(request.toLista(produtoRepository,listaRepository));
+            Lista lista = listaRepository.findById(Integer.parseInt(request.getListaId())).orElseThrow(
+                    () -> new NotFoundException("Erro: lista não encontrada.")
+            );
+            Produto produto = produtoRepository.findById(Integer.parseInt(request.getProdutoId())).orElseThrow(
+                    () -> new NotFoundException("Erro: produto não encontrado.")
+            );
+            Optional<ListaProduto> listaProduto = listaProdutoRepository.findFirstByProdutoAndLista(produto, lista);
+            listaProduto.ifPresentOrElse(
+                    itemEncontrado -> {
+                        itemEncontrado.setQtde(itemEncontrado.getQtde() + request.getQtde());
+                        listaProdutoRepository.save(itemEncontrado);
+                    },
+                    () -> {
+                        ListaProduto newLista = new ListaProduto();
+                        newLista.setProduto(produto);
+                        newLista.setLista(lista);
+                        newLista.setQtde(request.getQtde());
+                        listaProdutoRepository.save(newLista);
+                    }
+            );
             log.info(statusService.addProdutoListaTrue().getMensagem());
             return ResponseEntity.status(HttpStatus.CREATED).body(statusService.addProdutoListaTrue());
         }catch (NotFoundException e){
