@@ -24,21 +24,4 @@ public class ListaProdutoDto {
     private String listaId;
     @NotNull
     private int qtde;
-
-
-
-    public ListaProduto toLista(ProdutoRepository produtoRepository, ListaRepository listaRepository){
-        ListaProduto listaProduto = new ListaProduto();
-        Lista lista = listaRepository.findById(Integer.parseInt(listaId)).orElseThrow(
-                () -> new NotFoundException("Erro: lista não encontrada.")
-        );
-        Produto produtoAux = produtoRepository.findById(Integer.parseInt(produtoId)).orElseThrow(
-                () -> new NotFoundException("Erro: produto não encontrado.")
-        );
-        listaProduto.setProduto(produtoAux);
-        listaProduto.setLista(lista);
-        listaProduto.setQtde(qtde);
-        return listaProduto;
-    }
-
 }
