@@ -113,6 +113,21 @@ public class FornecedorServiceImpl implements FornecedorService {
     }
 
     @Override
+    public ResponseEntity<FornecedorResponseDto> getFornecedor(String email) {
+        try {
+            ModelMapper modelMapper = new ModelMapper();
+            Usuario fornecedor = usuarioRepository.findByEmail(email).orElseThrow(
+                    () -> new NotFoundException("Erro: usuário com email '"+ email +"' não encontrado."));
+            FornecedorResponseDto response = modelMapper.map(fornecedor, FornecedorResponseDto.class);
+            return ResponseEntity.ok(response);
+        }catch(NotFoundException e){
+            throw new NotFoundException(e.getMessage());
+        }catch(Exception e){
+            throw new DefaultException("Erro ao pegar usuário '"+ email +"': "+ e.getMessage());
+        }
+    }
+
+    @Override
     public ResponseEntity<?> deleteFornecedor(int idForncedor) {
         ThreadContext.put("user", authenticationController.getUser());
         try{
