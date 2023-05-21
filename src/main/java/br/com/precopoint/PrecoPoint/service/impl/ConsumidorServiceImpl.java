@@ -85,6 +85,9 @@ public class ConsumidorServiceImpl implements ConsumidorService {
                 String senhaCrypt = passwordEncoder.encode(updateConsumidorRequestDto.getSenha());
                 consumidor.setSenha(senhaCrypt);
             }
+            if(updateConsumidorRequestDto.getStatusConta() != null){
+                consumidor.setStatusConta(updateConsumidorRequestDto.getStatusConta());
+            }
             consumidor.setAtualizadoEm(LocalDateTime.now());
             usuarioRepository.save(consumidor);
             ModelMapper modelMapper = new ModelMapper();

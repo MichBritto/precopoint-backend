@@ -82,6 +82,10 @@ public class FornecedorServiceImpl implements FornecedorService {
                 String senhaCrypt = passwordEncoder.encode(updateFornecedorRequestDto.getSenha());
                 fornecedor.setSenha(senhaCrypt);
             }
+            if(updateFornecedorRequestDto.getStatusConta() != null){
+                fornecedor.setStatusConta(updateFornecedorRequestDto.getStatusConta());
+            }
+
             fornecedor.setAtualizadoEm(LocalDateTime.now());
             usuarioRepository.save(fornecedor);
             ModelMapper modelMapper = new ModelMapper();

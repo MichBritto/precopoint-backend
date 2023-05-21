@@ -14,4 +14,5 @@ public class FornecedorResponseDto {
     private String email;
     private String cep;
     private String logotipo;
+    private Boolean statusConta;
 }
