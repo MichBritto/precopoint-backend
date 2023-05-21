@@ -37,6 +37,7 @@ public class Usuario implements UserDetails {
     private String cnpj;
     @Column(name = "logotipo")
     private String logotipo;
+    private Boolean statusConta;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name="usuario_role",

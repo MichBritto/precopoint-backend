@@ -17,4 +17,5 @@ public class UpdateConsumidorRequestDto {
     private String nome;
     private String endereco;
     private String senha;
+    private Boolean statusConta;
 }

@@ -12,4 +12,5 @@ public class UpdateFornecedorRequestDto {
     private String cep;
     private String senha;
     private String logotipo;
+    private Boolean statusConta;
 }

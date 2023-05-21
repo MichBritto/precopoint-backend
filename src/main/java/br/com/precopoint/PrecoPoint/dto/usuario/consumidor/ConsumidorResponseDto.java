@@ -12,4 +12,5 @@ public class ConsumidorResponseDto {
     private String nome;
     private String email;
     private String cep;
+    private Boolean statusConta;
 }
