@@ -134,7 +134,6 @@ public class ProdutoServiceImpl implements ProdutoService {
                     .map(produto -> {
                         var produtoFornecedor = modelMapper.map(produto,ProdutoResponseDto.class);
                         produtoFornecedor.setFornecedor(fornecedor.getNome());
-                        System.out.println("implementando push");
                         return produtoFornecedor;
                     }).toList();
             return ResponseEntity.ok(list);
