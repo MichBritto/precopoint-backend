@@ -103,9 +103,9 @@ public class FornecedorServiceImpl implements FornecedorService {
     public ResponseEntity<?> getAllFornecedor() {
         try {
             ModelMapper modelMapper = new ModelMapper();
-            List<Usuario> fornecedorList = usuarioRepository.findAll();
-            List<FornecedorResponseDto> finalList = fornecedorList.stream()
-                    .map(fornecedor -> modelMapper.map(fornecedor, FornecedorResponseDto.class)).toList();
+            List<FornecedorResponseDto> finalList = usuarioRepository.findByRolesNome("ROLE_FORNECEDOR")
+                    .stream()
+                    .map(consumidor -> modelMapper.map(consumidor, FornecedorResponseDto.class)).toList();
             return ResponseEntity.ok(finalList);
         }catch (Exception e){
             throw new DefaultException("Erro ao pegar usuários: "+ e.getMessage());
