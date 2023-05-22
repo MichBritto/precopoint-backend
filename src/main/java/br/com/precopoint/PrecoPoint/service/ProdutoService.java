@@ -12,6 +12,7 @@ public interface ProdutoService {
     ResponseEntity<?> deleteProduto(int idProduto) throws Exception;
     ResponseEntity<?> updateProduto(int produtoId, UpdateProdutoRequestDto produtoDetails);
     ResponseEntity<List<ProdutoResponseDto>> getProduto();
+    ResponseEntity<List<ProdutoResponseDto>> getProdutosByFornecedor(String email);
     ResponseEntity<List<DistinctProdutoResponseDto>> getDistinctProduto();
     ResponseEntity<List<DistinctProdutoResponseDto>> getProdutoByCategoria(int idCategoria);
     ResponseEntity<List<ProdutoResponseDto>> getProdutoAsc() throws Exception;

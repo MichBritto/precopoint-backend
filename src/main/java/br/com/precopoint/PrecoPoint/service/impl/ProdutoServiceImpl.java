@@ -7,6 +7,7 @@ import br.com.precopoint.PrecoPoint.exception.DefaultException;
 import br.com.precopoint.PrecoPoint.exception.NotFoundException;
 import br.com.precopoint.PrecoPoint.model.Categoria;
 import br.com.precopoint.PrecoPoint.model.Produto;
+import br.com.precopoint.PrecoPoint.model.Usuario;
 import br.com.precopoint.PrecoPoint.repository.CategoriaRepository;
 import br.com.precopoint.PrecoPoint.repository.ProdutoRepository;
 import br.com.precopoint.PrecoPoint.repository.UsuarioRepository;
@@ -40,6 +41,8 @@ public class ProdutoServiceImpl implements ProdutoService {
     @Autowired
     CategoriaRepository categoriaRepository;
 
+    private ModelMapper modelMapper = new ModelMapper();
+
     @Override
     public ResponseEntity<StatusResponseDto> addProduto(ProdutoRequestDto request) throws Exception {
         ThreadContext.put("user", authenticationController.getUser());
@@ -72,7 +75,6 @@ public class ProdutoServiceImpl implements ProdutoService {
     @Override
     public ResponseEntity<?> updateProduto(int produtoId, UpdateProdutoRequestDto produtoDetails){
         try{
-            ModelMapper modelMapper = new ModelMapper();
             Produto produto = produtoRepository.findById(produtoId)
                     .orElseThrow(() -> new NotFoundException("Produto não encontrado para este id: " + produtoId));
 
@@ -109,7 +111,6 @@ public class ProdutoServiceImpl implements ProdutoService {
     @Override
     public ResponseEntity<List<ProdutoResponseDto>> getProduto() {
         try{
-            ModelMapper modelMapper = new ModelMapper();
             List<ProdutoResponseDto> list = produtoRepository.findAll().stream()
                     .map(produto -> {
                         ProdutoResponseDto produtoResponseDto = modelMapper.map(produto, ProdutoResponseDto.class);
@@ -124,8 +125,28 @@ public class ProdutoServiceImpl implements ProdutoService {
     }
 
     @Override
+    public ResponseEntity<List<ProdutoResponseDto>> getProdutosByFornecedor(String email) {
+        try{
+            Usuario fornecedor = usuarioRepository.findByEmail(email).orElseThrow(
+                    () -> new NotFoundException("Erro: usuário '"+ email +"' não encontrado"));
+            List<ProdutoResponseDto> list = produtoRepository.findByFornecedor(fornecedor)
+                    .stream()
+                    .map(produto -> {
+                        var produtoFornecedor = modelMapper.map(produto,ProdutoResponseDto.class);
+                        produtoFornecedor.setFornecedor(fornecedor.getNome());
+                        System.out.println("implementando push");
+                        return produtoFornecedor;
+                    }).toList();
+            return ResponseEntity.ok(list);
+        } catch(NotFoundException e){
+            throw new NotFoundException(e.getMessage());
+        }catch(Exception e){
+            throw new DefaultException(e.getMessage());
+        }
+    }
+
+    @Override
     public ResponseEntity<List<DistinctProdutoResponseDto>> getDistinctProduto() {
-        ModelMapper modelMapper = new ModelMapper();
         List<DistinctProdutoResponseDto> list = produtoRepository.findDistinctProdutoDescricaoMarca().stream()
                 .map(produto -> {
                     DistinctProdutoResponseDto produtoResponseDto = modelMapper.map(produto, DistinctProdutoResponseDto.class);
@@ -138,7 +159,6 @@ public class ProdutoServiceImpl implements ProdutoService {
     @Override
     public ResponseEntity<List<DistinctProdutoResponseDto>> getProdutoByCategoria(int idCategoria) {
         try{
-            ModelMapper modelMapper = new ModelMapper();
             Categoria categoria = categoriaRepository.findById(idCategoria).orElseThrow(
                     () -> new NotFoundException("Categoria com id '"+ idCategoria +"' não foi encontrada.")
             );
@@ -160,7 +180,6 @@ public class ProdutoServiceImpl implements ProdutoService {
     @Override
     public ResponseEntity<List<ProdutoResponseDto>> getProdutoAsc() throws Exception {
         try{
-            ModelMapper modelMapper = new ModelMapper();
             List<ProdutoResponseDto> list = produtoRepository.findAllByOrderByPrecoAsc().stream()
                     .map(produto -> {
                         ProdutoResponseDto produtoResponseDto = modelMapper.map(produto, ProdutoResponseDto.class);
@@ -177,7 +196,6 @@ public class ProdutoServiceImpl implements ProdutoService {
     @Override
     public ResponseEntity<List<ProdutoResponseDto>> getProdutoByNomeAsc(FindProdutoRequestDto findProdutoRequestDto) throws Exception {
         try{
-            ModelMapper modelMapper = new ModelMapper();
             List<ProdutoResponseDto> list = produtoRepository.findAllByProdutoContainingIgnoreCaseOrderByPrecoAsc(findProdutoRequestDto.getProduto()).stream()
                     .map(produto -> {
                         ProdutoResponseDto produtoResponseDto = modelMapper.map(produto, ProdutoResponseDto.class);
@@ -195,7 +213,6 @@ public class ProdutoServiceImpl implements ProdutoService {
     public ResponseEntity<List<ProdutoResponseDto>> filterProdutos(String produto, Double precoMin, Double precoMax) {
         try{
             List<ProdutoResponseDto> listResponse = null;
-            ModelMapper modelMapper = new ModelMapper();
 
             if(precoMin != null && precoMax != null && precoMin > precoMax){
                 throw new DefaultException("'Preço Mínimo' deve ser maior que 'Preço Máximo'");
