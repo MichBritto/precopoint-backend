@@ -58,8 +58,8 @@ public class ConsumidorServiceImpl implements ConsumidorService {
     public ResponseEntity<?> getAllConsumidor() {
         try {
             ModelMapper modelMapper = new ModelMapper();
-            List<Usuario> consumidorList = usuarioRepository.findAll();
-            List<ConsumidorResponseDto> finalList = consumidorList.stream()
+            List<ConsumidorResponseDto> finalList = usuarioRepository.findByRolesNome("ROLE_CONSUMIDOR")
+                    .stream()
                     .map(consumidor -> modelMapper.map(consumidor, ConsumidorResponseDto.class)).toList();
             return ResponseEntity.ok(finalList);
 
