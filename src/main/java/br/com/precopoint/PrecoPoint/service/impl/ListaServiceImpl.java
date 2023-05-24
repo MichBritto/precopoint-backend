@@ -1,7 +1,10 @@
 package br.com.precopoint.PrecoPoint.service.impl;
 
 import br.com.precopoint.PrecoPoint.controller.AuthenticationController;
-import br.com.precopoint.PrecoPoint.dto.lista.*;
+import br.com.precopoint.PrecoPoint.dto.lista.CriarListaRequestDto;
+import br.com.precopoint.PrecoPoint.dto.lista.ListaProdutoDto;
+import br.com.precopoint.PrecoPoint.dto.lista.ListaValorTotalResponseDto;
+import br.com.precopoint.PrecoPoint.dto.lista.ListasDeConsumidorResponseDto;
 import br.com.precopoint.PrecoPoint.dto.produto.ProdutoResponseDto;
 import br.com.precopoint.PrecoPoint.dto.usuario.StatusResponseDto;
 import br.com.precopoint.PrecoPoint.exception.AlreadyExistsException;
@@ -195,6 +198,35 @@ public class ListaServiceImpl implements ListaService {
         } catch (Exception e) {
             throw new DefaultException("Erro ao pegar valor total de lista por fornecedor: " + e.getMessage());
         }
+    }
+
+    @Override
+    public ResponseEntity<?> getListaByFornecedor(int idLista, String email) {
+        ModelMapper modelMapper = new ModelMapper();
+        Lista lista = listaRepository.findById(idLista).orElseThrow(
+                () -> new NotFoundException("Lista de id '"+ idLista +"' não encontrada."));
+        Usuario fornecedor = usuarioRepository.findByEmail(email).orElseThrow(
+                () -> new NotFoundException("Usuario '"+ email +"' não encontrado."));
+        List<ListaProduto> listaProduto = listaProdutoRepository.findAllByListaDefault(lista);
+        List<ProdutoResponseDto> listByFornecedor = listaProduto.stream()
+            .map(listaProduto1 -> {
+                Optional<Produto> optionalProduto = produtoRepository.findByProdutoAndMarcaProdutoAndFornecedor(
+                        listaProduto1.getProduto().getProduto(),
+                        listaProduto1.getProduto().getMarcaProduto(),
+                        fornecedor
+                );
+                return optionalProduto.map(produto -> {
+                            var finalProduto = modelMapper.map(produto, ProdutoResponseDto.class);
+                            finalProduto.setFornecedor(produto.getFornecedor().getNome());
+                            finalProduto.setQtde(listaProduto1.getQtde());
+                            return finalProduto;
+                        })
+                        .orElse(null);
+            })
+            .filter(Objects::nonNull)
+            .toList();
+        
+        return ResponseEntity.ok(listByFornecedor);
     }
 
 }

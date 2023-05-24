@@ -16,5 +16,8 @@ public interface ListaProdutoRepository extends JpaRepository<ListaProduto, Inte
     @Query("SELECT lp.produto, lp.qtde FROM ListaProduto lp WHERE lp.lista = :lista")
     List<Object[]> findAllByLista(@Param("lista") Lista lista);
 
+    @Query("SELECT lp FROM ListaProduto lp WHERE lp.lista = :lista")
+    List<ListaProduto> findAllByListaDefault(@Param("lista") Lista lista);
+
     Optional<ListaProduto> findFirstByProdutoAndLista(Produto produto, Lista lista);
 }
