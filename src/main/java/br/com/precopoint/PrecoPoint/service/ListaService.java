@@ -14,4 +14,5 @@ public interface ListaService {
     ResponseEntity<List<?>> getListaConsumidor(String email) throws Exception;
     ResponseEntity<List<?>> getProdutosByLista(int idLista) throws Exception;
     ResponseEntity<?> getValorLista(int idLista) throws Exception;
+    ResponseEntity<?> getListaByFornecedor(int idLista, String email);
 }
