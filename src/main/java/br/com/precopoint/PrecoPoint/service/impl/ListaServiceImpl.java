@@ -66,7 +66,7 @@ public class ListaServiceImpl implements ListaService {
     }
 
     @Override
-    public ResponseEntity<StatusResponseDto> addProduto(ListaProdutoDto request) {
+    public ResponseEntity<?> addProduto(ListaProdutoDto request) {
         ThreadContext.put("user", authenticationController.getUser());
         try{
             Lista lista = listaRepository.findById(Integer.parseInt(request.getListaId())).orElseThrow(
@@ -76,19 +76,31 @@ public class ListaServiceImpl implements ListaService {
                     () -> new NotFoundException("Erro: produto não encontrado.")
             );
             Optional<ListaProduto> listaProduto = listaProdutoRepository.findFirstByProdutoAndLista(produto, lista);
-            listaProduto.ifPresentOrElse(
-                    itemEncontrado -> {
-                        itemEncontrado.setQtde(itemEncontrado.getQtde() + request.getQtde());
-                        listaProdutoRepository.save(itemEncontrado);
-                    },
-                    () -> {
-                        ListaProduto newLista = new ListaProduto();
-                        newLista.setProduto(produto);
-                        newLista.setLista(lista);
-                        newLista.setQtde(request.getQtde());
-                        listaProdutoRepository.save(newLista);
+            if (listaProduto.isPresent()) {
+                ListaProduto itemEncontrado = listaProduto.get();
+                int qtdeAnterior = itemEncontrado.getQtde();
+                System.out.println("Qtde selecionada para ser adicionada ou removida: "+request.getQtde());
+                System.out.println("Qtde anterior: "+ qtdeAnterior);
+                itemEncontrado.setQtde(itemEncontrado.getQtde() + request.getQtde());
+                System.out.println("Qtde atual do produto: "+itemEncontrado.getQtde());
+                if (qtdeAnterior > itemEncontrado.getQtde()){
+                    System.out.println("Qtde anterior é maior que a qtde atual");
+                    if (itemEncontrado.getQtde() <= 0) {
+                        System.out.println("Qtde atual é menor que 0");
+                        listaProdutoRepository.delete(itemEncontrado);
+                        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
                     }
-            );
+                    listaProdutoRepository.save(itemEncontrado);
+                    return ResponseEntity.ok().build();
+                }
+                listaProdutoRepository.save(itemEncontrado);
+            } else {
+                ListaProduto newLista = new ListaProduto();
+                newLista.setProduto(produto);
+                newLista.setLista(lista);
+                newLista.setQtde(request.getQtde());
+                listaProdutoRepository.save(newLista);
+            }
             log.info(statusService.addProdutoListaTrue().getMensagem());
             return ResponseEntity.status(HttpStatus.CREATED).body(statusService.addProdutoListaTrue());
         }catch (NotFoundException e){

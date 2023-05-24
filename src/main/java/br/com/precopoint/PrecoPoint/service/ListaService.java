@@ -10,7 +10,7 @@ import java.util.List;
 public interface ListaService {
 
     ResponseEntity<StatusResponseDto> criarLsita(CriarListaRequestDto request);
-    ResponseEntity<StatusResponseDto> addProduto(ListaProdutoDto request);
+    ResponseEntity<?> addProduto(ListaProdutoDto request);
     ResponseEntity<List<?>> getListaConsumidor(String email) throws Exception;
     ResponseEntity<List<?>> getProdutosByLista(int idLista) throws Exception;
     ResponseEntity<?> getValorLista(int idLista) throws Exception;

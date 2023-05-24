@@ -24,7 +24,7 @@ public class ListaProdutoController {
     }
 
     @PostMapping("addproduto")
-    public ResponseEntity<StatusResponseDto> addProduto(@Valid @RequestBody ListaProdutoDto request){
+    public ResponseEntity<?> addProduto(@Valid @RequestBody ListaProdutoDto request){
         return listaService.addProduto(request);
     }
 
