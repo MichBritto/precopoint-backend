@@ -209,7 +209,7 @@ public class ProdutoServiceImpl implements ProdutoService {
     }
 
     @Override
-    public ResponseEntity<List<ProdutoResponseDto>> filterProdutos(String produto, Double precoMin, Double precoMax) {
+    public ResponseEntity<List<ProdutoResponseDto>> filterProdutos(String produto, String categoria, Double precoMin, Double precoMax) {
         try{
             List<ProdutoResponseDto> listResponse = null;
 
@@ -276,6 +276,18 @@ public class ProdutoServiceImpl implements ProdutoService {
                             return produtoResponseDto;
                         }).toList();
             }
+            else if(categoria != null && !categoria.isEmpty()){
+                Categoria categoriaAux = categoriaRepository.findByCategoria(categoria).orElseThrow(
+                        () -> new NotFoundException("Erro: Categoria '"+ categoria +"' não encontrada."));
+                listResponse = produtoRepository.findByProdutoAndCategoriaDistinct(produto,categoriaAux)
+                        .stream()
+                        .map(produtoAux -> {
+                            ProdutoResponseDto produtoResponseDto = modelMapper.map(produtoAux, ProdutoResponseDto.class);
+                            produtoResponseDto.setFornecedor(produtoAux.getFornecedor().getNome());
+                            produtoResponseDto.setCategoria(produtoAux.getCategoria().getCategoria());
+                            return produtoResponseDto;
+                        }).toList();
+            }
             else if(produto != null && !produto.isEmpty()){
                 listResponse = produtoRepository.findByProduto(produto)
                         .stream()
@@ -290,6 +302,8 @@ public class ProdutoServiceImpl implements ProdutoService {
                 throw new DefaultException("Pelo menos um parametro deve ser passado.");
             }
             return ResponseEntity.ok(listResponse);
+        }catch(NotFoundException e) {
+            throw new NotFoundException(e.getMessage());
         }catch(DefaultException e) {
             throw new DefaultException(e.getMessage());
         }catch(Exception e) {

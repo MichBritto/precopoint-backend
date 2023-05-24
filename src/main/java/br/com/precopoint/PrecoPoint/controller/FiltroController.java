@@ -34,9 +34,10 @@ public class FiltroController {
 
     @GetMapping("produto")
     ResponseEntity<?> getProdutosByFilter(@RequestParam(name = "produto", required = false) String produto,
+                                          @RequestParam(name = "categoria", required = false) String categoria,
                                           @RequestParam(name = "precoMin", required = false) Double precoMin,
                                           @RequestParam(name = "precoMax", required = false) Double precoMax){
-        return produtoService.filterProdutos(produto,precoMin,precoMax);
+        return produtoService.filterProdutos(produto,categoria,precoMin,precoMax);
     }
 
     @GetMapping("list-produto") //retorna todos os produtos sem ordenação
