@@ -40,4 +40,7 @@ public interface ProdutoRepository extends JpaRepository<Produto, Integer> {
     List<Produto> findByCategoriaDistinct(Categoria categoria);
 
     List<Produto> findByFornecedor(Usuario fonrecedor);
+
+    @Query("SELECT p FROM Produto p WHERE p.id IN (SELECT MIN(p2.id) FROM Produto p2 WHERE p2.categoria = :categoria and p2.produto LIKE %:produto% GROUP BY p2.produto, p2.descricao, p2.marcaProduto)")
+    List<Produto> findByProdutoAndCategoriaDistinct(@Param("produto") String nome, @Param("categoria") Categoria categoria);
 }
