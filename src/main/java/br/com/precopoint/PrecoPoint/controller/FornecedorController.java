@@ -28,9 +28,9 @@ public class FornecedorController {
         return fornecedorService.deleteFornecedor(idFornecedor);
     }
 
-    @GetMapping("getlista-by-fornecedor/{idLista}/{email}")
+    @GetMapping("getlista-by-fornecedor/{idLista}/{nomeFornecedor}")
     public ResponseEntity<?> getListaByFornecedor(@PathVariable("idLista") int idLista,
-                                                  @PathVariable("email") String email) {
-        return listaService.getListaByFornecedor(idLista,email);
+                                                  @PathVariable("nomeFornecedor") String nomeFornecedor) {
+        return listaService.getListaByFornecedor(idLista,nomeFornecedor);
     }
 }
