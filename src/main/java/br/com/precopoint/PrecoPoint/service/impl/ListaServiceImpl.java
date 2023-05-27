@@ -201,12 +201,12 @@ public class ListaServiceImpl implements ListaService {
     }
 
     @Override
-    public ResponseEntity<?> getListaByFornecedor(int idLista, String email) {
+    public ResponseEntity<?> getListaByFornecedor(int idLista, String nomeFornecedor) {
         ModelMapper modelMapper = new ModelMapper();
         Lista lista = listaRepository.findById(idLista).orElseThrow(
                 () -> new NotFoundException("Lista de id '"+ idLista +"' não encontrada."));
-        Usuario fornecedor = usuarioRepository.findByEmail(email).orElseThrow(
-                () -> new NotFoundException("Usuario '"+ email +"' não encontrado."));
+        Usuario fornecedor = usuarioRepository.findByNome(nomeFornecedor).orElseThrow(
+                () -> new NotFoundException("Usuario '"+ nomeFornecedor +"' não encontrado."));
         List<ListaProduto> listaProduto = listaProdutoRepository.findAllByListaDefault(lista);
         List<ProdutoResponseDto> listByFornecedor = listaProduto.stream()
             .map(listaProduto1 -> {
