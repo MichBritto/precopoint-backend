@@ -42,4 +42,10 @@ public class ListaProdutoController {
     public ResponseEntity<?> getValorLista(@PathVariable("idLista") int idLista) throws Exception {
         return listaService.getValorLista(idLista);
     }
+
+    @GetMapping("getlista-by-fornecedor/{idLista}/{nomeFornecedor}")
+    public ResponseEntity<?> getListaByFornecedor(@PathVariable("idLista") int idLista,
+                                                  @PathVariable("nomeFornecedor") String nomeFornecedor) {
+        return listaService.getListaByFornecedor(idLista,nomeFornecedor);
+    }
 }
