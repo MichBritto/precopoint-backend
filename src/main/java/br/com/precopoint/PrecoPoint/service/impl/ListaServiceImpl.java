@@ -82,14 +82,9 @@ public class ListaServiceImpl implements ListaService {
             if (listaProduto.isPresent()) {
                 ListaProduto itemEncontrado = listaProduto.get();
                 int qtdeAnterior = itemEncontrado.getQtde();
-                System.out.println("Qtde selecionada para ser adicionada ou removida: "+request.getQtde());
-                System.out.println("Qtde anterior: "+ qtdeAnterior);
                 itemEncontrado.setQtde(itemEncontrado.getQtde() + request.getQtde());
-                System.out.println("Qtde atual do produto: "+itemEncontrado.getQtde());
                 if (qtdeAnterior > itemEncontrado.getQtde()){
-                    System.out.println("Qtde anterior é maior que a qtde atual");
                     if (itemEncontrado.getQtde() <= 0) {
-                        System.out.println("Qtde atual é menor que 0");
                         listaProdutoRepository.delete(itemEncontrado);
                         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
                     }
