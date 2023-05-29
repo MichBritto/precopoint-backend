@@ -20,4 +20,6 @@ public interface ListaProdutoRepository extends JpaRepository<ListaProduto, Inte
     List<ListaProduto> findAllByListaDefault(@Param("lista") Lista lista);
 
     Optional<ListaProduto> findFirstByProdutoAndLista(Produto produto, Lista lista);
+
+    List<ListaProduto> findByLista(Lista lista);
 }

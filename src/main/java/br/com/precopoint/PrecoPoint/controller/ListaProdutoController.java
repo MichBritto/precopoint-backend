@@ -7,6 +7,7 @@ import br.com.precopoint.PrecoPoint.dto.usuario.StatusResponseDto;
 import br.com.precopoint.PrecoPoint.service.ListaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -21,6 +22,12 @@ public class ListaProdutoController {
     @PostMapping("criarlista")
     public ResponseEntity<StatusResponseDto> criarLsita(@Valid @RequestBody CriarListaRequestDto request){
         return listaService.criarLsita(request);
+    }
+
+    @Transactional
+    @DeleteMapping("delete/{idLista}")
+    public ResponseEntity<?> deleteLista(@PathVariable(name = "idLista") int idLista){
+        return listaService.deleteLista(idLista);
     }
 
     @PostMapping("addproduto")

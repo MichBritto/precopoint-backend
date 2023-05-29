@@ -224,4 +224,25 @@ public class ListaServiceImpl implements ListaService {
         return ResponseEntity.ok(listByFornecedor);
     }
 
+    @Override
+    public ResponseEntity<?> deleteLista(int idLista) {
+        try{
+            listaRepository.findById(idLista).ifPresentOrElse(
+                    lista ->  {
+                        List<ListaProduto> listaProduto = listaProdutoRepository.findByLista(lista);
+                        listaProdutoRepository.deleteAll(listaProduto);
+                        listaRepository.delete(lista);
+                    },
+                    () -> {
+                        throw new NotFoundException("Erro, lista com id '"+ idLista +"' não encontrada.");
+                    }
+            );
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        } catch(NotFoundException e){
+            throw new NotFoundException(e.getMessage());
+        } catch(Exception e){
+            throw new DefaultException(e.getMessage());
+        }
+    }
+
 }
