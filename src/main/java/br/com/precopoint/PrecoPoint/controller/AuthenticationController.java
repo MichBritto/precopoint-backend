@@ -1,6 +1,7 @@
 package br.com.precopoint.PrecoPoint.controller;
 
 import br.com.precopoint.PrecoPoint.config.security.TokenService;
+import br.com.precopoint.PrecoPoint.config.security.VerifyUserStatus;
 import br.com.precopoint.PrecoPoint.dto.login.LoginFormDto;
 import br.com.precopoint.PrecoPoint.dto.login.TokenDto;
 import br.com.precopoint.PrecoPoint.exception.UnauthorizedException;
@@ -25,9 +26,10 @@ import javax.validation.Valid;
 public class AuthenticationController {
     @Autowired
     AuthenticationManager authManager;
-
     @Autowired
     TokenService tokenService;
+    @Autowired
+    VerifyUserStatus verifyUserStatus;
 
     private String user;
 
@@ -35,6 +37,7 @@ public class AuthenticationController {
     public ResponseEntity<TokenDto> autenticar(@RequestBody @Valid LoginFormDto login) {
         this.user = login.getEmail();
         try{
+            verifyUserStatus.authenticationWithStatusUserTrue(login.getEmail());
             Authentication authentication = authManager.authenticate(
                     new UsernamePasswordAuthenticationToken(login.getEmail(),login.getSenha()));
             ThreadContext.put("user",login.getEmail());
