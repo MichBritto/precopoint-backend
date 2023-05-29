@@ -56,11 +56,14 @@ public class ListaServiceImpl implements ListaService {
                         throw new AlreadyExistsException("Outra lista já foi cadastrada com este mesmo nome pelo usuário '"+
                                                             request.getEmailConsumidor() +"'");
                     });
+            if(listaRepository.findAllByConsumidor(consumidor).size() >= 7) {
+                throw new AlreadyExistsException("Consumidor atingiu o limite de listas, para criar uma nova, exclua uma não utilizada.");
+            }
             listaRepository.save(new Lista(request.getNomeLista(), consumidor));
             log.info(statusService.listaStatusTrue().getMensagem());
             return ResponseEntity.status(HttpStatus.CREATED).body(statusService.listaStatusTrue());
         }catch(AlreadyExistsException e){
-            throw new NotFoundException("Erro ao criar lista: "+ e.getMessage());
+            throw new AlreadyExistsException("Erro ao criar lista: "+ e.getMessage());
         }catch(NotFoundException e){
             throw new NotFoundException("Erro ao criar lista: "+ e.getMessage());
         }catch(Exception e){

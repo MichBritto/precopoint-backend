@@ -13,7 +13,5 @@ public interface ListaRepository extends JpaRepository<Lista, Integer> {
 
     @Query("select e from Lista e where e.consumidor = :consumidor")
     List<Lista> findAllByConsumidor(@Param("consumidor") Usuario consumidor);
-
     Optional<Lista> findByNomeAndConsumidor(String nomeLista, Usuario consumidor);
-
 }
