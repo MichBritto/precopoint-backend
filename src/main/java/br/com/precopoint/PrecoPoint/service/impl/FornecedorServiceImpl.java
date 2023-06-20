@@ -64,10 +64,10 @@ public class FornecedorServiceImpl implements FornecedorService {
     }
 
     @Override
-    public ResponseEntity<?> updateFornecedor(int idFornecedor, UpdateFornecedorRequestDto updateFornecedorRequestDto) {
+    public ResponseEntity<?> updateFornecedor(UpdateFornecedorRequestDto updateFornecedorRequestDto) {
         try{
-            Usuario fornecedor = usuarioRepository.findById(idFornecedor).orElseThrow(
-                    () -> new NotFoundException("Erro: usuário com id '"+ idFornecedor +"' não encontrado."));
+            Usuario fornecedor = usuarioRepository.findByEmail(updateFornecedorRequestDto.getEmail()).orElseThrow(
+                    () -> new NotFoundException("Erro: usuário com email '"+ updateFornecedorRequestDto.getEmail() +"' não encontrado."));
             if(updateFornecedorRequestDto.getCep() != null && !updateFornecedorRequestDto.getCep().trim().isEmpty() ){
                 fornecedor.setCep(updateFornecedorRequestDto.getCep());
             }

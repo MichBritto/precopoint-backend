@@ -13,6 +13,10 @@ public class CorsConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry){
         registry.addMapping("/**")
                 .allowedOrigins("*") //delimitação de quais ip's podem acessar a api
-                .allowedMethods("GET","POST","PUT","DELETE","TRACE","OPTIONS","HEAD","CONNECT");
+                .allowedMethods("GET","POST","PUT","DELETE","TRACE","OPTIONS","HEAD","CONNECT")
+                .allowedHeaders("Authorization","Content-Type")
+                .exposedHeaders("Authorization")
+                .maxAge(3600);
     }
+
 }
