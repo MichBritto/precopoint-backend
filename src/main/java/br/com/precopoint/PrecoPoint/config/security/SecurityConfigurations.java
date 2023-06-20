@@ -48,7 +48,7 @@ public class SecurityConfigurations extends WebSecurityConfigurerAdapter {
                 .antMatchers("/lista/**").hasAnyRole("CONSUMIDOR","ADMINISTRADOR")
                 .antMatchers("/fornecedor/**").hasAnyRole("FORNECEDOR","ADMINISTRADOR")
                 .antMatchers("/produto/**").hasAnyRole("FORNECEDOR","ADMINISTRADOR")
-                .antMatchers("/admin/**").hasRole("ADMNISTRADOR")
+                .antMatchers("/admin/**").hasRole("ADMINISTRADOR")
                 .anyRequest()
                 .authenticated()
                 .and().cors()

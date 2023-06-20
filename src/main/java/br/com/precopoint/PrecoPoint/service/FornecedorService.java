@@ -12,7 +12,7 @@ import java.util.List;
 
 public interface FornecedorService {
     ResponseEntity<StatusResponseDto> addFornecedor(FornecedorRequestDto fornecedor);
-    ResponseEntity<?> updateFornecedor(int idFornecedor, UpdateFornecedorRequestDto updateFornecedorRequestDto);
+    ResponseEntity<?> updateFornecedor(UpdateFornecedorRequestDto updateFornecedorRequestDto);
     ResponseEntity<?> getAllFornecedor();
     ResponseEntity<FornecedorResponseDto> getFornecedor(String email);
     ResponseEntity<?> deleteFornecedor(int idForncedor);
