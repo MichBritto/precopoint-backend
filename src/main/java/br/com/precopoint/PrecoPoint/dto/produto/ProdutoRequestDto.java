@@ -36,7 +36,7 @@ public class ProdutoRequestDto {
 
     public Produto toProuduto(UsuarioRepository usuarioRepository, CategoriaRepository categoriaRepository){
         Produto produtoAux = new Produto();
-        Usuario fornecedorAux =  usuarioRepository.findByNome(fornecedor).orElseThrow(
+        Usuario fornecedorAux =  usuarioRepository.findByEmail(fornecedor).orElseThrow(
                 () -> new NotFoundException("Fornecedor '"+ fornecedor +"' não encontrado."));
         Categoria categoriaAux = categoriaRepository.findByCategoria(categoria).orElseThrow(
                 () ->  new NotFoundException("Categoria '"+ categoria +"' não encontrada."));

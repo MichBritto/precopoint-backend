@@ -32,6 +32,7 @@ public class ConsumidorRequestDto {
         consumidor.setCep(endereco);
         consumidor.setEmail(email);
         consumidor.setSenha(senhaCrypt);
+        consumidor.setStatusConta(true);
         consumidor.setRoles(Set.of(consumidorRole));
         return consumidor;
     }

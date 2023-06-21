@@ -37,6 +37,7 @@ public class FornecedorRequestDto{
         fornecedor.setSenha(senhaCrypt);
         fornecedor.setCnpj(cnpj);
         fornecedor.setLogotipo(logotipo);
+        fornecedor.setStatusConta(true);
         fornecedor.setRoles(Set.of(fornecedorRole));
         return fornecedor;
     }
